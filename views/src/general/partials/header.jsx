@@ -42,10 +42,13 @@ export default function Header() {
           <a href="#services" className="hover:text-primary-400 transition">
             Services
           </a>
-          <a href="#about" className="hover:text-primary-400 transition">
+          <a href="/about-us" className="hover:text-primary-400 transition">
             About
           </a>
-          <a href="#contact" className="hover:text-primary-400 transition">
+          <a href="/portfolio" className="hover:text-primary-400 transition">
+            Portfolio
+          </a>
+          <a href="/contact" className="hover:text-primary-400 transition">
             Contact
           </a>
           <button className="px-4 py-2 bg-gradient-to-r from-primary-700 to-secondary-500 rounded-lg hover:opacity-90 transition">
@@ -70,6 +73,9 @@ export default function Header() {
           </a>
           <a href="#about" className="hover:text-primary-400 transition" onClick={toggleMenu}>
             About
+          </a>
+          <a href="/portfolio" className="hover:text-primary-400 transition" onClick={toggleMenu}>
+            Portfolio
           </a>
           <a href="#contact" className="hover:text-primary-400 transition" onClick={toggleMenu}>
             Contact
