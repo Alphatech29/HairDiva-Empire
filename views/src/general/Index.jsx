@@ -5,6 +5,7 @@ import AboutSection from "../componenets/aboutSection";
 import TechSection from "../componenets/tackSection";
 import WhySection from "../componenets/whySection";
 import TestimonialSection from "../componenets/testimonialsSection";
+import FeatureSection from "../componenets/featureSection";
 
 function Index() {
   return (
@@ -13,6 +14,7 @@ function Index() {
 <ServiceSection/>
 <AboutSection/>
 <TechSection/>
+<FeatureSection/>
 <TestimonialSection/>
 <WhySection/>
 </>

@@ -22,7 +22,7 @@ export default function Hero() {
       </div>
 
       {/* Container */}
-      <div className="z-30 relative w-full pc:mt-40">
+      <div className="z-30 relative w-full pc:mt-40 mobile:mt-20">
         <div className="flex mobile:flex-col tab:flex-row items-center justify-between gap-8">
           {/* Text Content */}
           <div className="pc:w-[70%] tab:w-1/2">

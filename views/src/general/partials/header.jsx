@@ -61,7 +61,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="tab:hidden w-full px-4 pb-4 flex flex-col space-y-4 bg-primary-950">
+        <div className="tab:hidden w-full text-primary-200 font-medium px-4 pb-4 flex flex-col space-y-4 bg-primary-950/90">
           <a href="#home" className="hover:text-primary-400 transition" onClick={toggleMenu}>
             Home
           </a>
