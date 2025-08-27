@@ -36,7 +36,7 @@ export default function Header() {
 
         {/* Navigation */}
         <nav className="hidden tab:flex space-x-6 items-center">
-          <a href="#home" className="hover:text-primary-400 transition">
+          <a href="/" className="hover:text-primary-400 transition">
             Home
           </a>
           <a href="#services" className="hover:text-primary-400 transition">
