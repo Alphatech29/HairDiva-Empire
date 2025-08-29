@@ -4,6 +4,7 @@
   "main": "app.js",
   "scripts": {
    "start": "node app.js",
+   "live": "node deploy.js",
     "dev": "nodemon app.js"
   },
   "keywords": [],
