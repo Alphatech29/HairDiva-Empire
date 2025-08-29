@@ -9,6 +9,9 @@ export default {
       mobile: "350px",
       tab: "750px",
       pc: "1024px",
+      sm: "350px",
+      md: "750px",
+      lg: "1024px",
     },
     extend: {
       colors: {
