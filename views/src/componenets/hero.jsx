@@ -65,7 +65,7 @@ export default function Hero() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg sm:rounded-l-lg sm:rounded-r-none placeholder:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base sm:w-20"
+                  className="flex-1 px-4 py-3 border border-primary-300 rounded-lg sm:rounded-l-lg sm:rounded-r-none placeholder:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base sm:w-20"
                   required
                 />
                 <button

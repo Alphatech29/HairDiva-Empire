@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
+import FAQ from "../componenets/faq";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
@@ -207,6 +208,8 @@ export default function AboutUs() {
         </div>
       </motion.div>
 
+      <FAQ/>
+
       {/* CTA Section */}
       <motion.div
         className="max-w-5xl mx-auto py-16 sm:py-20 text-center"
@@ -229,5 +232,6 @@ export default function AboutUs() {
         </div>
       </motion.div>
     </div>
+
   );
 }
