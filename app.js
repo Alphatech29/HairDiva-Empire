@@ -9,7 +9,7 @@ app.use(express.json());
 const staticPath = path.join(__dirname, "views", "dist");
 app.use(express.static(staticPath));
 
-// Catch-all route for SPA (React, Vue, etc.)
+// Catch-all route for SPA (React)
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(staticPath, "index.html"), (err) => {
     if (err) {

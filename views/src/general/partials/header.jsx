@@ -40,16 +40,16 @@ export default function Header() {
             Home
           </a>
           <a href="#services" className="hover:text-primary-400 transition">
-            Services
+            Our Services
           </a>
           <a href="/about-us" className="hover:text-primary-400 transition">
             About
           </a>
           <a href="/portfolio" className="hover:text-primary-400 transition">
-            Portfolio
+             Our Portfolio
           </a>
-          <a href="/contact" className="hover:text-primary-400 transition">
-            Contact
+          <a href="/contact-us" className="hover:text-primary-400 transition">
+            Contact Us
           </a>
           <button className="px-4 py-2 bg-gradient-to-r from-primary-700 to-secondary-500 rounded-lg hover:opacity-90 transition">
              Hire Us
@@ -69,16 +69,16 @@ export default function Header() {
             Home
           </a>
           <a href="#services" className="hover:text-primary-400 transition" onClick={toggleMenu}>
-            Services
+            Our Services
           </a>
           <a href="#about" className="hover:text-primary-400 transition" onClick={toggleMenu}>
             About
           </a>
           <a href="/portfolio" className="hover:text-primary-400 transition" onClick={toggleMenu}>
-            Portfolio
+            Our Portfolio
           </a>
-          <a href="#contact" className="hover:text-primary-400 transition" onClick={toggleMenu}>
-            Contact
+          <a href="contact-us" className="hover:text-primary-400 transition" onClick={toggleMenu}>
+            Contact Us
           </a>
           <button className="px-4 py-2 bg-gradient-to-r from-primary-700 to-secondary-500 rounded-lg hover:opacity-90 transition">
             Hire Us

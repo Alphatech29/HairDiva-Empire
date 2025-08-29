@@ -3,6 +3,7 @@ import Index from "./general/Index";
 import Header from "./general/partials/header";
 import Footer from "./general/partials/footer";
 import Portfolio from "./general/portfolio";
+import Contact from "./general/contact";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Index />} />
          <Route path="/portfolio" element={<Portfolio />} />
+         <Route path="/contact-us" element={<Contact />} />
       </Routes>
       <Footer/>
     </Router>

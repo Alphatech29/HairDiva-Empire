@@ -31,7 +31,7 @@ const projects = [
 
 export default function PortfolioSection() {
   return (
-    <section className="pc:px-20 px-5 py-12 grid gap-5 tab:grid-cols-2 pc:grid-cols-3 relative z-30 bg-primary-200">
+    <section className="pc:px-20 px-5 py-6 grid gap-5 tab:grid-cols-2 pc:grid-cols-3 relative z-30 bg-primary-200">
       {projects.map((project) => (
         <div
           key={project.id}
