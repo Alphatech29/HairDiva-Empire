@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import FAQ from "../componenets/faq";
+import { NavLink } from "react-router-dom";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
@@ -51,12 +52,13 @@ export default function AboutUs() {
           grow beyond limits.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <button className="rounded-full bg-primary-900 px-5 sm:px-6 py-2 sm:py-3 font-medium text-white shadow-md shadow-primary-800 hover:bg-primary-800/90 transition text-sm sm:text-base">
+          <NavLink to='/hire-us'
+ className="rounded-full bg-primary-900 px-5 sm:px-6 py-2 sm:py-3 font-medium text-white shadow-md shadow-primary-800 hover:bg-primary-800/90 transition text-sm sm:text-base">
             Work with us
-          </button>
-          <button className="rounded-full border border-primary-700 px-5 sm:px-6 py-2 sm:py-3 font-medium text-gray-200 hover:bg-primary-800 transition text-sm sm:text-base">
+          </NavLink>
+          <NavLink to="/portfolio" className="rounded-full border border-primary-700 px-5 sm:px-6 py-2 sm:py-3 font-medium text-gray-200 hover:bg-primary-800 transition text-sm sm:text-base">
             Our work
-          </button>
+          </NavLink>
         </div>
       </motion.div>
 

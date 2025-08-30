@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,16 +10,16 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // common nav classes
+  const baseClasses = "transition";
+  const activeClasses = "text-primary-400 font-semibold";
 
   return (
     <header
@@ -28,32 +29,68 @@ export default function Header() {
     >
       <div className="flex justify-between items-center text-primary-100 font-medium py-4 mobile:px-4 pc:px-[5rem]">
         {/* Logo */}
-        <div className="text-2xl font-bold text-primary-200"><img
+        <div className="text-2xl font-bold text-primary-200">
+          <NavLink to="/">
+            <img
               src="/image/favicon.png"
               alt="Logo"
-              className=" object-contain w-36"
-            /></div>
+              className="object-contain w-36"
+            />
+          </NavLink>
+        </div>
 
-        {/* Navigation */}
+        {/* Desktop Navigation */}
         <nav className="hidden tab:flex space-x-6 items-center">
-          <a href="/" className="hover:text-primary-400 transition">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             Home
-          </a>
-          <a href="#services" className="hover:text-primary-400 transition">
+          </NavLink>
+          <NavLink
+            to="/services"
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             Our Services
-          </a>
-          <a href="/about-us" className="hover:text-primary-400 transition">
+          </NavLink>
+          <NavLink
+            to="/about-us"
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             About
-          </a>
-          <a href="/portfolio" className="hover:text-primary-400 transition">
-             Our Portfolio
-          </a>
-          <a href="/contact-us" className="hover:text-primary-400 transition">
+          </NavLink>
+          <NavLink
+            to="/portfolio"
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
+            Our Portfolio
+          </NavLink>
+          <NavLink
+            to="/contact-us"
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             Contact Us
-          </a>
-          <button className="px-4 py-2 bg-gradient-to-r from-primary-700 to-secondary-500 rounded-lg hover:opacity-90 transition">
-             Hire Us
-          </button>
+          </NavLink>
+          <NavLink
+            to="/hire-us"
+            className={({ isActive }) =>
+              `px-4 py-2 rounded-lg bg-gradient-to-r from-primary-700 to-secondary-500 hover:opacity-90 transition ${
+                isActive ? "ring-2 ring-primary-400" : ""
+              }`
+            }
+          >
+            Hire Us
+          </NavLink>
         </nav>
 
         {/* Mobile Menu Icon */}
@@ -65,24 +102,62 @@ export default function Header() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="tab:hidden w-full text-primary-200 font-medium px-4 pb-4 flex flex-col space-y-4 bg-primary-950/90">
-          <a href="#home" className="hover:text-primary-400 transition" onClick={toggleMenu}>
+          <NavLink
+            to="/"
+            onClick={toggleMenu}
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             Home
-          </a>
-          <a href="#services" className="hover:text-primary-400 transition" onClick={toggleMenu}>
+          </NavLink>
+          <NavLink
+            to="/services"
+            onClick={toggleMenu}
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             Our Services
-          </a>
-          <a href="#about" className="hover:text-primary-400 transition" onClick={toggleMenu}>
+          </NavLink>
+          <NavLink
+            to="/about-us"
+            onClick={toggleMenu}
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             About
-          </a>
-          <a href="/portfolio" className="hover:text-primary-400 transition" onClick={toggleMenu}>
+          </NavLink>
+          <NavLink
+            to="/portfolio"
+            onClick={toggleMenu}
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             Our Portfolio
-          </a>
-          <a href="contact-us" className="hover:text-primary-400 transition" onClick={toggleMenu}>
+          </NavLink>
+          <NavLink
+            to="/contact-us"
+            onClick={toggleMenu}
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
             Contact Us
-          </a>
-          <button className="px-4 py-2 bg-gradient-to-r from-primary-700 to-secondary-500 rounded-lg hover:opacity-90 transition">
+          </NavLink>
+          <NavLink
+            to="/hire-us"
+            onClick={toggleMenu}
+            className={({ isActive }) =>
+              `px-4 py-2 rounded-lg bg-gradient-to-r from-primary-700 to-secondary-500 hover:opacity-90 transition text-center ${
+                isActive ? "ring-2 ring-primary-400" : ""
+              }`
+            }
+          >
             Hire Us
-          </button>
+          </NavLink>
         </div>
       )}
     </header>

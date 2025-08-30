@@ -5,6 +5,9 @@ import Footer from "./general/partials/footer";
 import Portfolio from "./general/portfolio";
 import Contact from "./general/contact";
 import AboutUs from "./general/aboutUs";
+import Service from "./general/service";
+import PrivacyPolicy from "./general/privacy";
+import HireUs from "./general/hireUs";
 
 export default function App() {
   return (
@@ -15,6 +18,9 @@ export default function App() {
          <Route path="/portfolio" element={<Portfolio />} />
          <Route path="/contact-us" element={<Contact />} />
          <Route path="/about-us" element={<AboutUs />} />
+         <Route path="/services" element={<Service />} />
+          <Route path="/hire-us" element={<HireUs />} />
+         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
       <Footer/>
     </Router>
