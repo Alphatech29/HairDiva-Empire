@@ -1,15 +1,21 @@
 import { NavLink } from "react-router-dom";
+import React, { useEffect } from "react";
 
 export default function HireUs({ theme = "from-primary-950 to-secondary-500", text = "text-primary-200" }) {
+   useEffect(() => {
+    document.title = "Hire Us | We create digital solutions that enhance communication and growth.";
+  }, []);
   return (
+    <>
+
     <div className={`bg-gradient-to-br ${theme} ${text} min-h-screen flex flex-col`}>
       
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center px-6 pt-40">
         <h1 className="text-5xl font-bold mb-4">Work With Us</h1>
         <p className="max-w-2xl text-lg opacity-80">
-          We are a trusted software development company helping startups and enterprises 
-          build scalable, secure, and innovative digital solutions. From idea to launch, 
+          We are a trusted software development company helping startups and enterprises
+          build scalable, secure, and innovative digital solutions. From idea to launch,
           we deliver technology that drives growth and efficiency.
         </p>
         <NavLink className="mt-6 bg-primary-200 text-black px-6 py-3 rounded-2xl shadow-lg font-semibold hover:scale-105 transition">
@@ -98,5 +104,6 @@ export default function HireUs({ theme = "from-primary-950 to-secondary-500", te
       </section>
 
     </div>
+    </>
   );
 }
