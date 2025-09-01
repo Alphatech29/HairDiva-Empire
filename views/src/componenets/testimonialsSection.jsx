@@ -4,28 +4,28 @@ import { motion } from "framer-motion";
 
 const testimonials = [
   {
-    name: "Ooni of Ile",
-    designation: "Customer",
+    name: "Mrs Esther",
+    designation: "CEO Fundmax",
     text: "This software company delivered excellent solutions and made the entire process seamless.",
   },
   {
-    name: "Jane Doe",
+    name: "Franklin Johnson",
     designation: "CEO, TechCorp",
     text: "Professional, creative, and reliable. They built exactly what we needed on time.",
   },
   {
-    name: "John Smith",
-    designation: "Founder, StartupX",
+    name: "Mr Morten",
+    designation: "Founder, Paysparq",
     text: "Great attention to detail and client satisfaction. Highly recommended.",
   },
   {
-    name: "Michael Lee",
+    name: "Mr Michael",
     designation: "CTO, InnovateNow",
     text: "Their technical expertise is top-notch, and communication was excellent throughout.",
   },
   {
     name: "Sarah Johnson",
-    designation: "Manager, BuildIT",
+    designation: "Manager, Betreaders",
     text: "We are impressed with their dedication and problem-solving skills.",
   },
 ];
