@@ -7,7 +7,7 @@ const SupportOptions = () => {
       title: "WhatsApp",
       description: "Quick responses via WhatsApp",
       button: "CHAT NOW",
-      link: "https://wa.me/2349012345678",
+      link: "https://wa.me/2349129079450",
       icon: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
     },
     {
@@ -16,7 +16,7 @@ const SupportOptions = () => {
       description: "Book a consultation session",
       button: "BOOK NOW",
       link: "#",
-      icon: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Calendar_icon_2.svg",
+      icon: "https://cdn.vectorstock.com/i/1000v/62/98/may-2-flat-daily-calendar-icon-date-vector-17656298.avif",
     },
     {
       id: 3,

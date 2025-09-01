@@ -9,6 +9,7 @@ import Service from "./general/service";
 import PrivacyPolicy from "./general/privacy";
 import HireUs from "./general/hireUs";
 import Pricing from "./general/pricing";
+import TermsService from "./general/terms-service";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
          <Route path="/services" element={<Service />} />
           <Route path="/hire-us" element={<HireUs />} />
          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+         <Route path="/terms-of-service" element={<TermsService />} />
          <Route path="/pricing" element={<Pricing />} />
       </Routes>
       <Footer/>

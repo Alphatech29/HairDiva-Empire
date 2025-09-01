@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
 
 const AboutSection = () => {
   const textVariant = {
@@ -92,7 +93,8 @@ const AboutSection = () => {
             viewport={{ once: true }}
             variants={textVariant}
           >
-            Know more about us
+            <NavLink to="/about-us">Know more about us</NavLink>
+
           </motion.button>
         </div>
       </div>

@@ -111,7 +111,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-10 items-center">
           <div className="relative group w-full h-72 sm:h-96 lg:h-[500px] overflow-hidden rounded-3xl border border-gray-700 shadow-lg">
             <img
-              src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              src="/ceo.jpg"
               alt="Founder & CEO"
               className="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
             />
@@ -228,9 +228,10 @@ export default function AboutUs() {
             Whether you’re a startup or an enterprise, we’re here to help bring
             your vision to life.
           </p>
-          <button className="mt-6 rounded-full bg-primary px-5 sm:px-6 py-2 sm:py-3 font-medium text-white shadow-md hover:bg-primary/90 transition text-sm sm:text-base">
+          <NavLink to="/hire-us"
+           className="mt-6 rounded-full bg-primary px-5 sm:px-6 py-2 sm:py-3 font-medium text-white shadow-md hover:bg-primary/90 transition text-sm sm:text-base">
             Start a Project
-          </button>
+          </NavLink>
         </div>
       </motion.div>
     </div>

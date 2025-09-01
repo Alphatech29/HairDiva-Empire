@@ -1,6 +1,7 @@
 // action.jsx
 import React from "react";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
 
 const Action = () => {
   return (
@@ -38,7 +39,8 @@ const Action = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
         >
-          Claim Your Spot on the Web
+          <NavLink to="/hire-us">Claim Your Spot on the Web</NavLink>
+
         </motion.button>
       </motion.div>
     </section>

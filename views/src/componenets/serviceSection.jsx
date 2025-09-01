@@ -1,5 +1,5 @@
 import React from "react";
-import { FaDesktop, FaMobileAlt, FaCloud, FaPalette, FaDatabase, FaUsers } from "react-icons/fa";
+import { FaDesktop, FaMobileAlt, FaCloud, FaPalette, FaDatabase, FaTools } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 // Card animation (scroll-in) variants
@@ -148,9 +148,9 @@ const ServiceSection = () => {
           >
             <FaDatabase className="text-white text-3xl" />
           </motion.div>
-          <h3 className="text-primary-800 font-semibold text-lg mb-2">Data Science</h3>
+          <h3 className="text-primary-800 font-semibold text-lg mb-2">Data Management</h3>
           <p className="text-primary-700 text-sm">
-            Empowering clients to overcome challenging data obstacles, we predict product/service demand, enhance customer satisfaction, and shape business strategies through informed decisions and foresight.
+            Empowering clients to overcome complex data challenges, we optimize database performance, ensure data integrity, and enable secure, scalable systems that drive efficiency, support decision-making, and strengthen business strategies.
           </p>
         </motion.div>
 
@@ -171,11 +171,11 @@ const ServiceSection = () => {
             whileHover={{ scale: 1.2 }}
             viewport={{ once: true }}
           >
-            <FaUsers className="text-primary-700 text-3xl" />
+            <FaTools className="text-primary-700 text-3xl" />
           </motion.div>
-          <h3 className="text-primary-800 font-semibold text-lg mb-2">Product Management</h3>
+          <h3 className="text-primary-800 font-semibold text-lg mb-2">IT Consulting</h3>
           <p className="text-primary-700 text-base">
-            Focusing on product-market fit, we integrate niche standards with unique management approaches. Our emphasis on priorities ensures flexibility as we adapt to changes, emphasizing what matters most for success.
+            Delivering tailored technology solutions, we align IT strategies with business goals, optimize processes, and integrate best practices. Our flexible approach ensures adaptability to change while focusing on what matters most for long-term success.
           </p>
         </motion.div>
       </div>

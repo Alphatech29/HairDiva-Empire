@@ -118,7 +118,7 @@ const Hero = () => {
             <motion.div whileHover={{ scale: 1.05 }}>
               <NavLink
                 to="/hire-us"
-                className="px-5 py-1 sm:px-6 sm:py-3 bg-yellow-400 text-gray-900 font-bold rounded-xl shadow-lg flex items-center gap-2 transition-transform text-sm sm:text-base"
+                className="px-5 py-2 sm:px-4  bg-yellow-400 text-gray-900 font-bold rounded-xl shadow-lg flex items-center gap-2 transition-transform text-sm sm:text-base"
               >
                 Get Started <FaArrowRight />
               </NavLink>
@@ -127,7 +127,7 @@ const Hero = () => {
             <motion.div whileHover={{ scale: 1.05 }}>
               <NavLink
                 to="/pricing"
-                className="px-5 py-1 sm:px-6 sm:py-3 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-gray-900 transition text-sm sm:text-base flex items-center justify-center"
+                className="px-5 py-2 sm:px-4  border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-gray-900 transition text-sm sm:text-base flex items-center justify-center"
               >
                 Explore Pricing
               </NavLink>

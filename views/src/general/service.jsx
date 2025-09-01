@@ -1,208 +1,208 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import {
+  FaLaptopCode, 
+  FaMobileAlt, 
+  FaPaintBrush,
+  FaCloud,
+  FaLock, 
+  FaDatabase, 
+  FaShoppingCart, 
+  FaSearch,
+   FaCheckCircle,
+} from "react-icons/fa";
 
-export default function Service() {
-  const servicesData = [
-    {
-      id: 1,
-      title: "Premium UI/UX",
-      desc: "User-centered interfaces with measurable conversion lift.",
-      tags: ["Design", "Research"],
-      accent: "from-[#F66B04] to-[#FCEDD4]",
-    },
-    {
-      id: 2,
-      title: "Frontend Engineering",
-      desc: "Scalable React apps, accessible and fast.",
-      tags: ["React", "Performance"],
-      accent: "from-[#451805] to-[#F66B04]",
-    },
-    {
-      id: 3,
-      title: "Mobile Apps",
-      desc: "Cross-platform apps using modern stacks.",
-      tags: ["React Native", "Expo"],
-      accent: "from-[#FCEDD4] to-[#451805]",
-    },
-    {
-      id: 4,
-      title: "Brand & Visuals",
-      desc: "Logos, identity systems and brand strategy.",
-      tags: ["Brand", "Strategy"],
-      accent: "from-[#F66B04] to-[#451805]",
-    },
-  ];
+import { motion, useAnimation } from "framer-motion";
+import Pageheader from "./partials/pageHeader";
+import TestimonialSection from "../componenets/testimonialsSection";
+import FeatureSection from "../componenets/featureSection";
+import { NavLink } from "react-router-dom";
 
-  const [query, setQuery] = React.useState("");
-  const [activeTag, setActiveTag] = React.useState("All");
-  const [selected, setSelected] = React.useState(null);
-  const [shuffleSeed, setShuffleSeed] = React.useState(0);
+// Services Data
+const services = [
+  {
+    icon: <FaLaptopCode size={30} className="text-primary-400" />,
+    title: "Web Development",
+    description: "We build scalable, responsive, and modern websites tailored to your business needs.",
+  },
+  {
+    icon: <FaMobileAlt size={30} className="text-primary-400" />,
+    title: "Mobile App Development",
+    description: "Cross-platform mobile solutions with seamless UX and high performance.",
+  },
+  {
+    icon: <FaPaintBrush size={30} className="text-primary-400" />,
+    title: "UI/UX Design",
+    description: "Designing intuitive interfaces and engaging experiences for your users.",
+  },
+  {
+    icon: <FaCloud size={30} className="text-primary-400" />,
+    title: "Cloud Solutions",
+    description: "Secure, scalable, and efficient cloud integrations to empower your business.",
+  },
+  {
+    icon: <FaLock size={30} className="text-primary-400" />,
+    title: "Cybersecurity",
+    description: "Protecting your digital assets with modern security solutions and compliance standards.",
+  },
+  {
+    icon: <FaDatabase size={30} className="text-primary-400" />,
+    title: "Database Management",
+    description: "Reliable database design, optimization, and maintenance services.",
+  },
+  {
+    icon: <FaShoppingCart size={30} className="text-primary-400" />,
+    title: "E-commerce Solutions",
+    description: "Custom online stores with secure payment integrations and smooth shopping experiences.",
+  },
+  {
+    icon: <FaSearch size={30} className="text-primary-400" />,
+    title: "SEO Optimization",
+    description: "Boosting visibility and search rankings to help your business reach the right audience.",
+  },
 
-  const allTags = ["All", ...new Set(servicesData.flatMap((s) => s.tags))];
+];
 
-  const filtered = servicesData
-    .filter((s) => activeTag === "All" || s.tags.includes(activeTag))
-    .filter(
-      (s) =>
-        s.title.toLowerCase().includes(query.toLowerCase()) ||
-        s.desc.toLowerCase().includes(query.toLowerCase())
-    )
-    .map((s, i) => ({ ...s, _rand: (Math.sin(i + shuffleSeed) + 1) / 2 }))
-    .sort((a, b) => b._rand - a._rand);
+
+// Features Data
+const features = [
+  "Expert & Experienced Team",
+  "Custom Solutions for Every Client",
+  "Affordable and Transparent Pricing",
+  "Fast Delivery & Continuous Support",
+];
+
+// Technologies Data
+const technologies = [
+  {
+    logo: "https://blinktech.com.ng/wp-content/uploads/2024/06/I-Will-Write-Javascript-Html-Css-Php-Jquery-Code-For-You.jpeg",
+  },
+  {
+    logo: "https://www.startechup.com/wp-content/uploads/January-11-2021-Nodejs-What-it-is-used-for-and-when-where-to-use-it-for-your-enterprise-app-development.jpg.webp",
+  },
+  {
+    logo: "https://www.elbuild.it/assets/img/techs/mysql.png",
+  },
+  {
+    logo: "https://miro.medium.com/v2/resize:fit:1100/format:webp/1*z5I4J44MzcC478_RVg8VdA.png",
+  },
+  {
+    logo: "https://www.techmonitor.ai/wp-content/uploads/sites/29/2016/07/wordpress-logo-1.jpg",
+  },
+  {
+    logo: "https://i0.wp.com/the-saltstore.com/wp-content/uploads/2023/10/React-JS.png?w=1400&ssl=1",
+  },
+   {
+    logo: "https://www.okoone.com/wp-content/uploads/2024/10/tailwindcss-logo-400x245.png",
+  },
+  {
+    logo: "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fi%2Fhpg6if7btrwilqkidqbe.png",
+  },
+  {
+    logo: "https://www.okoone.com/wp-content/uploads/2024/06/firebase-logo-400x245.png",
+  },
+];
+
+// Card animation
+const cardVariants = {
+  offscreen: { y: 100, opacity: 0 },
+  onscreen: { y: 0, opacity: 1, transition: { type: "spring", bounce: 0.3, duration: 0.8 } },
+};
+
+const Services = () => {
+  useEffect(() => {
+      document.title =
+        "Our Services | We create digital solutions that enhance communication and growth.";
+    }, []);
+
+  // Auto-scroll for Technologies Carousel
+  const controls = useAnimation();
+  const carouselRef = useRef(null);
+
+  useEffect(() => {
+    controls.start({
+      x: ["0%", "-50%"],
+      transition: {
+        x: { repeat: Infinity, repeatType: "loop", duration: 20, ease: "linear" },
+      },
+    });
+  }, [controls]);
 
   return (
-    <section className="relative py-12 px-4 sm:px-6 lg:px-16 bg-gradient-to-b from-white to-[#FFFBF7] overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#0f172a]">
-              Our services — crafted for impact
-            </h2>
-            <p className="mt-2 text-sm md:text-base text-slate-600 max-w-xl">
-              Hand-tailored solutions combining design, engineering and
-              strategy. Explore, filter, and pick what fits your ambition.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <input
-                aria-label="Search services"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full sm:w-72 rounded-full py-2 px-4 shadow-sm text-sm outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#F66B04]"
-                placeholder="Search services, e.g. 'React'"
-              />
-              <button
-                onClick={() => setShuffleSeed((s) => s + 1)}
-                title="Shuffle results"
-                className="absolute right-1 top-1/2 -translate-y-1/2 bg-white rounded-full p-1 shadow text-xs ring-1 ring-slate-200"
+    <>
+    <Pageheader title="Our Services" description="We offer a wide range of professional services to help your business grow and succeed online." />
+     <div>
+      {/* Services Grid */}
+      <section className="py-20 sm:py-10 bg-primary-200">
+        <div className="lg:px-[5rem] px-6">
+          <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-4">
+            {services.map((service, index) => (
+              <motion.div
+                key={index}
+                className="bg-gradient-to-r from-primary-500 via-primary-800 to-primary-600 p-8 rounded-2xl shadow-lg"
+                initial="offscreen"
+                whileInView="onscreen"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={cardVariants}
               >
-                ⟳
-              </button>
-            </div>
-
-            {/* Scrollable tags */}
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide sm:overflow-visible">
-              {allTags.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setActiveTag(t)}
-                  className={`px-3 py-1 whitespace-nowrap rounded-full text-sm font-medium transition ${
-                    activeTag === t
-                      ? "bg-[#F66B04] text-white shadow"
-                      : "ring-1 ring-slate-200"
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-        </header>
-
-        {/* Service cards */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filtered.map((s) => (
-            <article
-              key={s.id}
-              className={`relative p-5 rounded-2xl bg-white/60 backdrop-blur-xl shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-100`}
-            >
-              <div
-                className={`absolute inset-0 -z-10 bg-gradient-to-r ${s.accent} opacity-10`}
-              />
-
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-[#0f172a]">
-                    {s.title}
-                  </h3>
-                  <p className="text-sm text-slate-600">{s.desc}</p>
+                <div className="flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-6">
+                  {service.icon}
                 </div>
-                <button
-                  onClick={() => setSelected(s)}
-                  className="self-start mt-1 inline-flex items-center gap-2 rounded-lg px-3 py-1 text-sm font-semibold ring-1 ring-[#F66B04] hover:bg-[#F66B04] hover:text-white transition"
-                >
-                  View
-                </button>
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {s.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="text-xs px-2 py-1 rounded-full bg-white/60 ring-1 ring-slate-200"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </article>
-          ))}
-
-          {filtered.length === 0 && (
-            <div className="col-span-full text-center py-12">
-              <p className="text-slate-600">
-                No services match your search. Try a different keyword or click
-                the shuffle button.
-              </p>
-              <button
-                onClick={() => {
-                  setQuery("");
-                  setActiveTag("All");
-                  setShuffleSeed((s) => s + 1);
-                }}
-                className="mt-4 rounded-lg px-4 py-2 ring-1 ring-slate-200"
-              >
-                Reset
-              </button>
-            </div>
-          )}
+                <h3 className="text-xl font-semibold text-white mb-3">{service.title}</h3>
+                <p className="text-white text-sm">{service.description}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Modal */}
-      {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setSelected(null)}
+
+    {/* Technologies Carousel */}
+<section className="py-20 bg-primary-200 overflow-hidden">
+  <div className="lg:px-[5rem] px-6 text-center">
+    <h2 className="text-4xl font-bold mb-12 text-primary-800">Technologies We Use</h2>
+    <motion.div
+      className="flex space-x-12 cursor-grab"
+      drag="x"
+      dragConstraints={{ left: -1000, right: 0 }}
+      whileTap={{ cursor: "grabbing" }}
+      animate={controls}
+    >
+      {[...technologies, ...technologies].map((tech, index) => (
+        <motion.div
+          key={index}
+          className="flex flex-col items-center p-4 bg-white rounded-2xl shadow-md min-w-[120px] hover:scale-105 transition-transform duration-300"
+        >
+          <img
+            src={tech.logo}
+            alt={tech.name}
+            className="w-16 h-10 object-contain"
           />
-          <div className="relative z-10 w-full max-w-lg bg-white rounded-2xl p-6 shadow-xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-xl font-bold">{selected.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{selected.desc}</p>
-                <div className="mt-3 flex gap-2 flex-wrap">
-                  {selected.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-xs px-2 py-1 ring-1 ring-slate-200 rounded-full"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <button
-                onClick={() => setSelected(null)}
-                className="mt-1 self-start rounded-lg px-3 py-1 ring-1 ring-slate-200"
-              >
-                Close
-              </button>
-            </div>
+        </motion.div>
+      ))}
+    </motion.div>
+  </div>
+</section>
+      {/* Why Choose Us */}
+     <FeatureSection/>
 
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button className="rounded-lg px-4 py-2 bg-[#451805] text-white font-semibold">
-                Request proposal
-              </button>
-              <button className="rounded-lg px-4 py-2 ring-1 ring-slate-200">
-                Schedule call
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </section>
+      {/* Testimonials */}
+      <TestimonialSection/>
+
+      {/* Call to Action */}
+      <section className="bg-gradient-to-r from-primary-200 via-primary-400 to-primary-300 py-20 text-center text-white ">
+        <h2 className="text-4xl font-bold mb-6">Ready to Start Your Project?</h2>
+        <p className="mb-8 sm-px-4">Contact us today and let's build something amazing together.</p>
+        <NavLink
+          to="/hire-us"
+          className="bg-white text-primary-500 font-semibold px-8 py-4 rounded-full shadow-lg hover:bg-primary-100 transition"
+        >
+          Get in Touch
+        </NavLink>
+      </section>
+    </div>
+    </>
+
   );
-}
+};
+
+export default Services;
