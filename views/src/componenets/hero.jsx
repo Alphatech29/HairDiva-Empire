@@ -1,202 +1,173 @@
-import { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import { NavLink } from "react-router-dom";
-import { motion, useViewportScroll, useTransform } from "framer-motion";
-import { FaArrowRight, FaUsers, FaCheckCircle } from "react-icons/fa";
 
-const Hero = () => {
-  const { scrollY } = useViewportScroll();
-  const floatY1 = useTransform(scrollY, [0, 800], [0, -50]);
-  const floatY2 = useTransform(scrollY, [0, 800], [0, 60]);
-  const floatY3 = useTransform(scrollY, [0, 800], [0, -30]);
+const slides = [
+  {
+    title: "Beauty in Every Strand",
+    description:
+      "Luxury human hair, wigs, installations, and customization for flawless beauty. Transform your look with elegance and confidence.",
+    modelImage:
+      "/image/hair-2.jpg",
+  },
+  {
+    title: "Luxury Wigs for Every Style",
+    description:
+      "Upgrade your hairstyle with premium wigs that redefine elegance. Bring your dream look to life.",
+    modelImage:
+      "/image/hair-1.jpg",
+  },
+  {
+    title: "Custom Hair Installations",
+    description:
+      "Tailored hair solutions to match your personality and style. Ensuring flawless results for every client.",
+    modelImage:
+      "/image/hair-3.jpg",
+  },
 
-  const taglines = [
-    "Innovation That Inspires",
-    "Design Meets Performance",
-    "Next-Gen Software Solutions",
-    "Empowering Your Digital Presence",
-  ];
-  const [currentTagline, setCurrentTagline] = useState(0);
+];
 
-  useEffect(() => {
-    const interval = setInterval(
-      () => setCurrentTagline((prev) => (prev + 1) % taglines.length),
-      3500
-    );
-    return () => clearInterval(interval);
-  }, []);
-
-  const metrics = [
-    { icon: <FaCheckCircle />, label: "220+ Projects" },
-    { icon: <FaUsers />, label: "90+ Industries" },
-    { icon: <FaCheckCircle />, label: "99% Satisfaction" },
-  ];
-
-  // Generate random particle positions
-  const particleCount = 15;
-  const particles = Array.from({ length: particleCount }, (_, i) => ({
-    size: Math.random() * 6 + 2,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    opacity: Math.random() * 0.5 + 0.2,
-    delay: Math.random() * 2,
-  }));
-
+export default function CarouselHero() {
   return (
-    <section className="relative w-full min-h-screen bg-gradient-to-br from-primary-900 via-primary-700 to-primary-950 overflow-hidden flex items-center justify-center px-4 sm:px-6 md:px-12 lg:pt-36 lg:px-24">
-      {/* Floating Neon Shapes */}
-      <motion.div
-        style={{ y: floatY1 }}
-        className="absolute w-64 sm:w-80 md:w-[500px] h-64 sm:h-80 md:h-[500px] rounded-full bg-gradient-to-tr from-pink-500 to-primary-600 opacity-40 blur-[80px] sm:blur-[100px] md:blur-[120px] top-[-80px] left-[-80px] rotate-[30deg]"
-        animate={{ rotate: [0, 15, -15, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        style={{ y: floatY2 }}
-        className="absolute w-72 sm:w-96 md:w-[600px] h-72 sm:h-96 md:h-[600px] rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 opacity-30 blur-[100px] sm:blur-[120px] md:blur-[150px] bottom-[-120px] right-[-120px]"
-        animate={{ rotate: [0, -20, 20, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        style={{ y: floatY3 }}
-        className="absolute w-48 sm:w-60 md:w-72 h-48 sm:h-60 md:h-72 rounded-full bg-gradient-to-tr from-yellow-400 to-red-500 opacity-30 blur-[90px] sm:blur-[110px] md:blur-[130px] top-1/4 right-[-80px]"
-        animate={{ rotate: [0, 25, -25, 0] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      {/* Particle-like floating dots */}
-      {particles.map((p, idx) => (
-        <motion.div
-          key={idx}
-          className="absolute bg-white rounded-full"
+    <section className="relative h-screen overflow-hidden bg-gradient-to-br from-purple-900 via-purple-700 to-purple-950">
+      {/* Floating particles & sparkles */}
+      {[...Array(25)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full bg-yellow-400/30 animate-[float_10s_linear_infinite]"
           style={{
-            width: p.size,
-            height: p.size,
-            top: p.top,
-            left: p.left,
-            opacity: p.opacity,
-          }}
-          animate={{ y: [0, 10, 0], x: [0, 10, 0] }}
-          transition={{
-            repeat: Infinity,
-            duration: 4 + Math.random() * 3,
-            ease: "easeInOut",
-            delay: p.delay,
+            width: `${2 + Math.random() * 8}px`,
+            height: `${2 + Math.random() * 8}px`,
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 10}s`,
           }}
         />
       ))}
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full max-w-7xl gap-6 sm:gap-8 md:gap-12">
-        {/* Text Section */}
-        <div className="flex-1 text-center md:text-left space-y-4 sm:space-y-6 md:space-y-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
-            Alphatech{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-pink-400 to-primary-500 animate-gradient-x">
-              Innovation Hub
-            </span>
-          </h1>
-
-          {/* Animated Gradient Tagline */}
-          <motion.p
-            key={currentTagline}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-yellow-400 to-purple-500 animate-gradient-x"
-          >
-            {taglines[currentTagline]}
-          </motion.p>
-
-          <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl max-w-md sm:max-w-lg md:max-w-xl mx-auto md:mx-0">
-            We craft digital experiences that elevate your business—Web Apps,
-            Mobile Apps, Cloud Solutions, and UI/UX Design. Tailored for growth,
-            efficiency, and performance.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 sm:mt-6 justify-center md:justify-start">
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <NavLink
-                to="/hire-us"
-                className="px-5 py-2 sm:px-4  bg-yellow-400 text-gray-900 font-bold rounded-xl shadow-lg flex items-center gap-2 transition-transform text-sm sm:text-base"
-              >
-                Get Started <FaArrowRight />
-              </NavLink>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <NavLink
-                to="/pricing"
-                className="px-5 py-2 sm:px-4  border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-gray-900 transition text-sm sm:text-base flex items-center justify-center"
-              >
-                Explore Pricing
-              </NavLink>
-            </motion.div>
-          </div>
-
-          {/* Key Metrics */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, staggerChildren: 0.2 }}
-            className="flex flex-wrap gap-4 sm:gap-6 mt-6 sm:mt-10 justify-center md:justify-start text-white text-sm sm:text-base"
-          >
-            {metrics.map((metric, idx) => (
-              <motion.div key={idx} className="flex flex-col items-center">
-                <metric.icon.type className="text-xl sm:text-2xl mb-1 text-yellow-400" />
-                <span className="text-sm sm:text-base md:text-lg font-semibold">
-                  {metric.label}
-                </span>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Right Side Panel */}
-        <motion.div
-          style={{ y: useTransform(scrollY, [0, 800], [0, -20]) }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
-          className="hidden md:flex flex-col items-start gap-4 p-4 w-60 sm:w-72 lg:w-80 bg-white/5 backdrop-blur-md rounded-xl text-white shadow-lg"
+      {/* Golden light streaks */}
+      {[...Array(5)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"
         >
-          <h3 className="text-lg sm:text-xl font-bold text-yellow-400">
-            Why Choose Us?
-          </h3>
-          <ul className="space-y-2 text-sm sm:text-base">
-            <li className="flex items-center gap-2">
-              <FaCheckCircle className="text-yellow-400" /> Cutting-edge
-              Technology
-            </li>
-            <li className="flex items-center gap-2">
-              <FaCheckCircle className="text-yellow-400" /> Reliable & Scalable
-              Solutions
-            </li>
-            <li className="flex items-center gap-2">
-              <FaCheckCircle className="text-yellow-400" /> Expert Team Support
-            </li>
-            <li className="flex items-center gap-2">
-              <FaCheckCircle className="text-yellow-400" /> Customer
-              Satisfaction
-            </li>
-          </ul>
-          <p className="text-gray-200 text-sm sm:text-base mt-2">
-            Partner with Alphatech to accelerate your digital transformation and
-            achieve measurable results.
-          </p>
-        </motion.div>
-      </div>
+          <div
+            className="absolute w-[2px] h-full bg-gradient-to-b from-transparent via-yellow-400/50 to-transparent animate-light-streak"
+            style={{
+              left: `${20 + i * 15}%`,
+              animationDuration: `${8 + Math.random() * 5}s`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        </div>
+      ))}
 
-      {/* Scroll Indicator */}
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-xl sm:text-2xl md:text-3xl"
+      <Swiper
+        modules={[Autoplay, Navigation, Pagination]}
+        autoplay={{ delay: 6000, disableOnInteraction: false }}
+        pagination={{ clickable: true }}
+        loop
+        className="h-full"
       >
-        ⬇
-      </motion.div>
+        {slides.map((slide, idx) => (
+          <SwiperSlide key={idx}>
+            <div className="relative flex flex-col-reverse lg:flex-row items-center justify-between max-w-6xl w-full mx-auto h-full px-6">
+              {/* Small screen background image */}
+              <div
+                className="absolute inset-0 lg:hidden bg-cover bg-center"
+                style={{ backgroundImage: `url(${slide.modelImage})` }}
+              >
+                <div className="absolute inset-0 bg-purple-900/60 " />
+              </div>
+
+              {/* Text content */}
+              <div className="relative lg:mt-20 sm:mb-40 z-10 text-center lg:text-left max-w-lg lg:max-w-xl px-6 py-10 lg:p-0">
+                <h1
+                  className="text-5xl lg:text-6xl font-serif font-bold mb-4 
+                             bg-gradient-to-r from-yellow-300 via-white to-yellow-400
+                             bg-clip-text text-transparent drop-shadow-2xl animate-text-shimmer"
+                >
+                  {slide.title}
+                </h1>
+                <p className="text-lg lg:text-xl mb-6 text-white/90 drop-shadow-md">
+                  {slide.description}
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                  <NavLink
+                    to="/shop"
+                    className="px-6 py-2 bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-semibold rounded-md transition transform hover:scale-105 shadow-xl text-base"
+                  >
+                    Shop Now
+                  </NavLink>
+                  <NavLink
+                    to="#about"
+                    className="px-6 py-2 border border-yellow-400 text-yellow-400 font-semibold rounded-md hover:bg-yellow-400 hover:text-purple-900 transition transform hover:scale-105 text-base"
+                  >
+                    Learn More
+                  </NavLink>
+                </div>
+              </div>
+
+              {/* Large screen image with dynamic bottom mask */}
+              <div className="hidden lg:block relative mb-6 lg:mb-0 w-full lg:w-auto">
+                <div className="relative">
+                  <img
+                    src={slide.modelImage}
+                    alt="Hair Diva Model"
+                    className="rounded-3xl shadow-2xl max-w-sm object-cover transform hover:scale-105 transition duration-700 animate-glow"
+                    style={{
+                      WebkitMaskImage:
+                        "linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+                      WebkitMaskRepeat: "no-repeat",
+                      WebkitMaskSize: "100% 100%",
+                      maskImage:
+                        "linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+                      maskRepeat: "no-repeat",
+                      maskSize: "100% 100%",
+                    }}
+                  />
+                  {/* Glow overlays */}
+                  <div className="absolute -inset-4 bg-yellow-400/15 rounded-3xl blur-3xl pointer-events-none animate-pulse" />
+                  <div className="absolute -inset-6 border-2 border-yellow-400/20 rounded-3xl pointer-events-none" />
+                  <div className="absolute -inset-10 bg-gradient-to-tr from-yellow-300/10 via-purple-800/20 to-purple-900/0 rounded-3xl pointer-events-none" />
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      {/* Keyframe animations */}
+      <style>{`
+        @keyframes float {
+          0% { transform: translateY(0) translateX(0); opacity: 0.7; }
+          50% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+          100% { transform: translateY(0) translateX(0); opacity: 0.7; }
+        }
+        @keyframes text-shimmer {
+          0% { background-position: -500px 0; }
+          100% { background-position: 500px 0; }
+        }
+        @keyframes light-streak {
+          0% { transform: translateY(-100%) rotate(10deg); opacity: 0; }
+          50% { transform: translateY(50%) rotate(10deg); opacity: 0.5; }
+          100% { transform: translateY(100%) rotate(10deg); opacity: 0; }
+        }
+        .animate-text-shimmer {
+          background-size: 1000px 100%;
+          animation: text-shimmer 3s linear infinite;
+        }
+        .animate-glow {
+          box-shadow: 0 0 30px rgba(255, 223, 0, 0.4), 0 0 60px rgba(255, 223, 0, 0.2);
+          transition: box-shadow 0.5s ease-in-out;
+        }
+        .animate-light-streak {
+          animation: light-streak linear infinite;
+        }
+      `}</style>
     </section>
   );
-};
-
-export default Hero;
+}

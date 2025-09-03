@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [cartCount, setCartCount] = useState(0); // Example cart count
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -27,16 +28,10 @@ export default function Header() {
         scrolled ? "bg-primary-800/90" : "bg-transparent"
       }`}
     >
-      <div className="flex justify-between items-center text-primary-100 font-medium py-4 mobile:px-4 pc:px-[5rem]">
+      <div className="flex justify-between items-center text-primary-100 font-medium py-2 mobile:px-2 pc:px-[5rem]">
         {/* Logo */}
         <div className="text-2xl font-bold text-primary-200">
-          <NavLink to="/">
-            <img
-              src="/image/favicon.png"
-              alt="Logo"
-              className="object-contain w-36"
-            />
-          </NavLink>
+          HairDiva Empire
         </div>
 
         {/* Desktop Navigation */}
@@ -50,12 +45,20 @@ export default function Header() {
             Home
           </NavLink>
           <NavLink
-            to="/services"
+            to="/shop"
             className={({ isActive }) =>
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            Our Services
+            Shop
+          </NavLink>
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
+            Products
           </NavLink>
           <NavLink
             to="/about-us"
@@ -63,33 +66,45 @@ export default function Header() {
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            About
+            About Us
           </NavLink>
           <NavLink
-            to="/portfolio"
+            to="/gallery"
             className={({ isActive }) =>
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            Our Portfolio
+            Gallery
           </NavLink>
           <NavLink
-            to="/contact-us"
+            to="/contact"
             className={({ isActive }) =>
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            Contact Us
+            Contact
           </NavLink>
+
+          {/* Book Appointment Button */}
           <NavLink
-            to="/hire-us"
+            to="/book-appointment"
             className={({ isActive }) =>
               `px-4 py-2 rounded-lg bg-gradient-to-r from-primary-700 to-secondary-500 hover:opacity-90 transition ${
                 isActive ? "ring-2 ring-primary-400" : ""
               }`
             }
           >
-            Hire Us
+            Book Appointment
+          </NavLink>
+
+          {/* Cart Icon */}
+          <NavLink to="/cart" className="relative text-2xl hover:text-primary-400">
+            <FaShoppingCart />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
           </NavLink>
         </nav>
 
@@ -112,13 +127,22 @@ export default function Header() {
             Home
           </NavLink>
           <NavLink
-            to="/services"
+            to="/shop"
             onClick={toggleMenu}
             className={({ isActive }) =>
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            Our Services
+            Shop
+          </NavLink>
+          <NavLink
+            to="/products"
+            onClick={toggleMenu}
+            className={({ isActive }) =>
+              `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
+            }
+          >
+            Products
           </NavLink>
           <NavLink
             to="/about-us"
@@ -127,28 +151,28 @@ export default function Header() {
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            About
+            About Us
           </NavLink>
           <NavLink
-            to="/portfolio"
+            to="/gallery"
             onClick={toggleMenu}
             className={({ isActive }) =>
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            Our Portfolio
+            Gallery
           </NavLink>
           <NavLink
-            to="/contact-us"
+            to="/contact"
             onClick={toggleMenu}
             className={({ isActive }) =>
               `${baseClasses} ${isActive ? activeClasses : "hover:text-primary-400"}`
             }
           >
-            Contact Us
+            Contact
           </NavLink>
           <NavLink
-            to="/hire-us"
+            to="/book-appointment"
             onClick={toggleMenu}
             className={({ isActive }) =>
               `px-4 py-2 rounded-lg bg-gradient-to-r from-primary-700 to-secondary-500 hover:opacity-90 transition text-center ${
@@ -156,7 +180,19 @@ export default function Header() {
               }`
             }
           >
-            Hire Us
+            Book Appointment
+          </NavLink>
+          <NavLink
+            to="/cart"
+            onClick={toggleMenu}
+            className="relative text-2xl hover:text-primary-400"
+          >
+            <FaShoppingCart />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
           </NavLink>
         </div>
       )}
