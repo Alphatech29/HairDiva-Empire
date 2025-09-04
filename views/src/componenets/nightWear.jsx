@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   FaStar,
   FaRegStar,
@@ -7,9 +6,11 @@ import {
   FaEye,
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useCart } from "../utilitys/cartContext"; // adjust path if needed
 
 const nightWearProducts = [
   {
+    id: 1,
     name: "ROMWE Grunge Punk Women's Vintage Street Style Loose Fit Denim Capri Pants With Neutral Five-Pointed Star Appliques, School ",
     price: "₦241,367",
     oldPrice: "₦416,573",
@@ -19,6 +20,7 @@ const nightWearProducts = [
     tag: "Hot",
   },
   {
+    id: 2,
     name: "Secret Love Affair Crotchless Panty - Wine",
     price: "₦258,323",
     oldPrice: "₦447,541",
@@ -28,6 +30,7 @@ const nightWearProducts = [
     tag: "New",
   },
   {
+    id: 3,
     name: "Robe de pyjama décorée d'un nœud papillon",
     price: "₦5,516",
     oldPrice: "₦11,836",
@@ -37,6 +40,7 @@ const nightWearProducts = [
     tag: "Discount",
   },
   {
+    id: 4,
     name: "Satin Alphabet & Lips Printed Cami Dress For Sleeping",
     price: "₦9,516",
     oldPrice: "₦11,836",
@@ -48,14 +52,16 @@ const nightWearProducts = [
 ];
 
 export default function Nightwear() {
-  const [addedCart, setAddedCart] = useState(
-    Array(nightWearProducts.length).fill(false)
-  );
+  const { cartItems, addToCart, removeFromCart } = useCart();
 
-  const handleAddToCart = (index) => {
-    const updated = [...addedCart];
-    updated[index] = !updated[index];
-    setAddedCart(updated);
+  const isInCart = (productId) => cartItems.some((item) => item.id === productId);
+
+  const handleCartClick = (product) => {
+    if (isInCart(product.id)) {
+      removeFromCart(product.id);
+    } else {
+      addToCart(product);
+    }
   };
 
   return (
@@ -65,11 +71,10 @@ export default function Nightwear() {
           We sell ladies’ nightwear.
         </h2>
 
-        {/* Grid responsive */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 sm:gap-2">
-          {nightWearProducts.map((product, idx) => (
+          {nightWearProducts.map((product) => (
             <div
-              key={idx}
+              key={product.id}
               className="bg-white md:rounded-3xl sm:rounded-md shadow-lg overflow-hidden transform transition-all hover:-translate-y-2 hover:shadow-2xl group"
             >
               <div className="relative">
@@ -100,11 +105,12 @@ export default function Nightwear() {
                   </button>
                 </div>
 
+                {/* Mobile Cart Button */}
                 <div className="absolute bottom-2 right-2 md:hidden z-20">
                   <button
-                    onClick={() => handleAddToCart(idx)}
+                    onClick={() => handleCartClick(product)}
                     className={`p-2 rounded-md font-semibold transition-all ${
-                      addedCart[idx]
+                      isInCart(product.id)
                         ? "bg-green-500 text-white hover:bg-green-600"
                         : "bg-yellow-400 text-primary-900 hover:bg-yellow-300"
                     } flex items-center justify-center`}
@@ -148,30 +154,27 @@ export default function Nightwear() {
                 {/* Price + Add button row for md+ */}
                 <div className="hidden md:flex items-center justify-between mb-2">
                   <div>
-                    <span className="text-sm font-bold text-primary-900">
-                      {product.price}
-                    </span>
+                    <span className="text-sm font-bold text-primary-900">{product.price}</span>
                     {product.oldPrice && (
-                      <span className="text-sm line-through text-primary-400 ml-2">
-                        {product.oldPrice}
-                      </span>
+                      <span className="text-sm line-through text-primary-400 ml-2">{product.oldPrice}</span>
                     )}
                   </div>
                   <button
-                    onClick={() => handleAddToCart(idx)}
+                    onClick={() => handleCartClick(product)}
                     className={`px-3 py-1 mt-2 rounded-md font-semibold transition-all ${
-                      addedCart[idx]
+                      isInCart(product.id)
                         ? "bg-green-500 text-white hover:bg-green-600"
                         : "bg-yellow-400 text-primary-900 hover:bg-yellow-300"
                     } flex items-center gap-2`}
                   >
-                    <FaShoppingCart /> {addedCart[idx] ? "Added" : "Add"}
+                    <FaShoppingCart /> {isInCart(product.id) ? "Added" : "Add"}
                   </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
+
         <div className="flex items-center justify-center mt-8">
           <NavLink
             to="/shop/night-wear"
