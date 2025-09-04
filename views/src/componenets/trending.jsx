@@ -86,13 +86,11 @@ export default function Trending() {
   };
 
   return (
-    <section className="py-8 bg-gray-50">
+    <section className="py-8 bg-primary-100">
       <div className="md:max-w-7xl md:mx-auto px-6 sm:px-2">
         <h2 className="text-3xl font-bold text-primary-900 mb-8 text-center">
           Trending Products
         </h2>
-
-        {/* Grid responsive */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 sm:gap-2">
           {trendingProducts.map((product, idx) => (
             <div
@@ -111,26 +109,18 @@ export default function Trending() {
                     {product.tag}
                   </span>
                 )}
-
-                {/* ❤️ + 👁️ icons for small screens */}
                 <div className="absolute bottom-2 left-2 flex gap-3 md:hidden z-30">
                   <FaHeart className="text-red-500 text-2xl hover:scale-110 transition-transform cursor-pointer" />
                   <FaEye className="text-yellow-500 text-2xl hover:scale-110 transition-transform cursor-pointer" />
                 </div>
-
-                {/* ❤️ icon for md+ */}
                 <div className="absolute top-4 right-4 text-red-500 text-2xl hover:scale-110 transition-transform hidden md:block cursor-pointer">
                   <FaHeart />
                 </div>
-
-                {/* Quick View button for md+ */}
                 <div className="absolute inset-0 bg-black/20 pb-2 px-2 items-end justify-end opacity-0 hover:opacity-100 transition-opacity hidden md:flex">
                   <button className="bg-gradient-to-r from-primary-400 to-yellow-500 text-primary-950 text-base px-4 py-1 rounded-md font-semibold flex items-center gap-2">
                     <FaEye /> Quick View
                   </button>
                 </div>
-
-                {/* 🛒 Add button only on sm inside image (icon only) */}
                 <div className="absolute bottom-2 right-2 md:hidden z-20">
                   <button
                     onClick={() => handleAddToCart(idx)}
@@ -149,8 +139,6 @@ export default function Trending() {
                 <h3 className="text-base sm:text-sm font-semibold text-primary-900 mb-2 md:line-clamp-1 sm:line-clamp-2">
                   {product.name}
                 </h3>
-
-                {/* Stars */}
                 <div className="flex sm:text-sm items-center mb-1">
                   {[...Array(5)].map((_, i) =>
                     i < Math.floor(product.rating) ? (
@@ -163,8 +151,6 @@ export default function Trending() {
                     ({product.sold})
                   </span>
                 </div>
-
-                {/* Price on sm below stars */}
                 <div className="sm:block md:hidden mb-2">
                   <span className="text-sm sm:text-xs font-bold text-primary-900">{product.price}</span>
                   {product.oldPrice && (
@@ -173,8 +159,6 @@ export default function Trending() {
                     </span>
                   )}
                 </div>
-
-                {/* Price + Add button row for md+ */}
                 <div className="hidden md:flex items-center justify-between mb-2">
                   <div>
                     <span className="text-sm font-bold text-primary-900">{product.price}</span>
