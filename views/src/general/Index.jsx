@@ -1,10 +1,10 @@
 import React from "react";
-import Hero from "../componenets/hero";
-import Trending from "../componenets/trending";
-import Nightwear from "../componenets/nightWear";
-import AboutUsSection from "../componenets/AboutUsSection";
-import Look from "../componenets/look";
-import SalonSection from "../componenets/salonSection";
+import Hero from "../components/hero";
+import Trending from "../components/trending";
+import Nightwear from "../components/nightWear";
+import AboutUsSection from "../components/AboutUsSection";
+import Look from "../components/look";
+import SalonSection from "../components/salonSection";
 
 
 function Index() {

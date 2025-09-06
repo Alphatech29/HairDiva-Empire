@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FaBars, FaTimes, FaShoppingCart, FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import CartDropdown from "../../componenets/cartDropdown";
+import CartDropdown from "../../components/cartDropdown";
 import { useCart } from "../../utilitys/cartContext";
 
 export default function Header() {
@@ -44,9 +44,16 @@ export default function Header() {
       >
         <div className="flex justify-between items-center px-4 md:px-12 py-2">
           {/* Logo */}
-          <div className={`text-2xl font-bold ${scrolled ? "text-primary-800" : "text-white"}`}>
-            <img src="/image/favicon.png" alt="HairDiva Empire"
-            className="md:w-40 sm:w-32 h-16 object-cover" />
+          <div
+            className={`text-2xl font-bold ${
+              scrolled ? "text-primary-800" : "text-white"
+            }`}
+          >
+            <img
+              src={scrolled ? "/image/logo-scrolled.png" : "/image/favicon.png"}
+              alt="HairDiva Empire"
+              className="md:w-40 sm:w-32 h-16 object-cover"
+            />
           </div>
 
           {/* Desktop Navigation */}
@@ -56,8 +63,16 @@ export default function Header() {
               className={({ isActive }) =>
                 `${baseClasses} ${
                   isActive
-                    ? `${activeClasses} ${scrolled ? "text-primary-600 border-primary-600" : "text-white border-white"}`
-                    : `${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-gray-300"}`
+                    ? `${activeClasses} ${
+                        scrolled
+                          ? "text-primary-600 border-primary-600"
+                          : "text-white border-white"
+                      }`
+                    : `${
+                        scrolled
+                          ? "text-primary-800 hover:text-primary-600"
+                          : "text-white hover:text-gray-300"
+                      }`
                 }`
               }
             >
@@ -68,8 +83,16 @@ export default function Header() {
               className={({ isActive }) =>
                 `${baseClasses} ${
                   isActive
-                    ? `${activeClasses} ${scrolled ? "text-primary-600 border-primary-600" : "text-white border-white"}`
-                    : `${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-gray-300"}`
+                    ? `${activeClasses} ${
+                        scrolled
+                          ? "text-primary-600 border-primary-600"
+                          : "text-white border-white"
+                      }`
+                    : `${
+                        scrolled
+                          ? "text-primary-800 hover:text-primary-600"
+                          : "text-white hover:text-gray-300"
+                      }`
                 }`
               }
             >
@@ -80,8 +103,16 @@ export default function Header() {
               className={({ isActive }) =>
                 `${baseClasses} ${
                   isActive
-                    ? `${activeClasses} ${scrolled ? "text-primary-600 border-primary-600" : "text-white border-white"}`
-                    : `${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-gray-300"}`
+                    ? `${activeClasses} ${
+                        scrolled
+                          ? "text-primary-600 border-primary-600"
+                          : "text-white border-white"
+                      }`
+                    : `${
+                        scrolled
+                          ? "text-primary-800 hover:text-primary-600"
+                          : "text-white hover:text-gray-300"
+                      }`
                 }`
               }
             >
@@ -92,8 +123,16 @@ export default function Header() {
               className={({ isActive }) =>
                 `${baseClasses} ${
                   isActive
-                    ? `${activeClasses} ${scrolled ? "text-primary-600 border-primary-600" : "text-white border-white"}`
-                    : `${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-gray-300"}`
+                    ? `${activeClasses} ${
+                        scrolled
+                          ? "text-primary-600 border-primary-600"
+                          : "text-white border-white"
+                      }`
+                    : `${
+                        scrolled
+                          ? "text-primary-800 hover:text-primary-600"
+                          : "text-white hover:text-gray-300"
+                      }`
                 }`
               }
             >
@@ -105,7 +144,11 @@ export default function Header() {
           <div className="flex items-center justify-center space-x-6 text-xl">
             <NavLink
               to="/account"
-              className={`${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-primary-300"}`}
+              className={`${
+                scrolled
+                  ? "text-primary-800 hover:text-primary-600"
+                  : "text-white hover:text-primary-300"
+              }`}
             >
               <FaUser />
             </NavLink>
@@ -113,7 +156,11 @@ export default function Header() {
             <div className="relative" ref={cartRef}>
               <button
                 onClick={toggleCart}
-                className={`${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-primary-300"} relative mt-3`}
+                className={`${
+                  scrolled
+                    ? "text-primary-800 hover:text-primary-600"
+                    : "text-white hover:text-primary-300"
+                } relative mt-3`}
               >
                 <FaShoppingCart />
                 {cartCount > 0 && (
@@ -122,12 +169,20 @@ export default function Header() {
                   </span>
                 )}
               </button>
-              {cartOpen && <CartDropdown items={cartItems} total={total} onClose={() => setCartOpen(false)} />}
+              {cartOpen && (
+                <CartDropdown
+                  items={cartItems}
+                  total={total}
+                  onClose={() => setCartOpen(false)}
+                />
+              )}
             </div>
 
             {/* Mobile menu toggle */}
             <div
-              className={`${scrolled ? "text-primary-800" : "text-white"} md:hidden cursor-pointer`}
+              className={`${
+                scrolled ? "text-primary-800" : "text-white "
+              } md:hidden cursor-pointer`}
               onClick={toggleMenu}
             >
               {isOpen ? <FaTimes /> : <FaBars />}
@@ -139,16 +194,24 @@ export default function Header() {
         {isOpen && (
           <nav
             className={`md:hidden absolute top-full left-0 w-full shadow-md transition-colors duration-300 ${
-              scrolled ? "bg-primary-100" : "bg-transparent"
+              scrolled ? "bg-primary-100" : "bg-primary-100/30 backdrop-blur-md"
             }`}
           >
-            <ul className={`flex flex-col px-4 py-4 space-y-2 ${scrolled ? "text-primary-800" : "text-white"}`}>
+            <ul
+              className={`flex flex-col px-4 py-4 space-y-2 ${
+                scrolled ? "text-primary-800" : "text-white"
+              }`}
+            >
               <li>
                 <NavLink
                   to="/"
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
-                    `${baseClasses} ${isActive ? "font-semibold border-b-2 border-current" : "hover:text-primary-500"}`
+                    `${baseClasses} ${
+                      isActive
+                        ? "font-semibold border-b-2 border-current"
+                        : "hover:text-primary-500"
+                    }`
                   }
                 >
                   Home
@@ -159,7 +222,11 @@ export default function Header() {
                   to="/shop"
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
-                    `${baseClasses} ${isActive ? "font-semibold border-b-2 border-current" : "hover:text-primary-500"}`
+                    `${baseClasses} ${
+                      isActive
+                        ? "font-semibold border-b-2 border-current"
+                        : "hover:text-primary-500"
+                    }`
                   }
                 >
                   Shop
@@ -170,7 +237,11 @@ export default function Header() {
                   to="/salon"
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
-                    `${baseClasses} ${isActive ? "font-semibold border-b-2 border-current" : "hover:text-primary-500"}`
+                    `${baseClasses} ${
+                      isActive
+                        ? "font-semibold border-b-2 border-current"
+                        : "hover:text-primary-500"
+                    }`
                   }
                 >
                   Salon
@@ -181,7 +252,11 @@ export default function Header() {
                   to="/about-us"
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
-                    `${baseClasses} ${isActive ? "font-semibold border-b-2 border-current" : "hover:text-primary-500"}`
+                    `${baseClasses} ${
+                      isActive
+                        ? "font-semibold border-b-2 border-current"
+                        : "hover:text-primary-500"
+                    }`
                   }
                 >
                   About Us

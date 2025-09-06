@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaShoppingCart, FaMinus, FaPlus } from "react-icons/fa";
+import { FaShoppingCart, FaMinus, FaPlus, FaShoppingBasket } from "react-icons/fa";
 import { getProductById } from "../utilitys/products";
 import { useCart } from "../utilitys/cartContext";
 
@@ -58,7 +58,7 @@ const SingleProduct = () => {
 
   const handleAddToCart = () => {
     addToCart({
-      id: product.id, // important for merging quantities in context
+      id: product.id,
       product_name: product.product_name,
       image: selectedColor.image || product.image || "",
       color: selectedColor.color || null,
@@ -169,15 +169,31 @@ const SingleProduct = () => {
           </div>
 
           {/* Add to Cart */}
-          <div className="mt-6">
+          <div className="mt-6 flex flex-col gap-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleAddToCart}
-              className="w-full flex justify-center items-center gap-2 px-6 py-3 text-lg bg-yellow-500 text-primary-900 rounded-xl shadow-md hover:bg-yellow-400 transition"
+              className="w-full flex justify-center items-center gap-2 px-6 py-2 text-lg bg-yellow-400 text-primary-900 rounded-xl shadow-md hover:bg-yellow-300 transition"
             >
               <FaShoppingCart size={20} /> Add to Cart
             </motion.button>
+
+            {/* Back to Shop */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <NavLink
+                to="/shop"
+                className={({ isActive }) =>
+                  `w-full flex justify-center items-center gap-2 px-6 py-2 text-lg rounded-xl shadow-md transition ${
+                    isActive
+                      ? "bg-primary-500 text-primary-100"
+                      : "bg-primary-500 text-primary-100 hover:bg-yellow-400"
+                  }`
+                }
+              >
+                <FaShoppingBasket size={20} /> Back to Shop
+              </NavLink>
+            </motion.div>
           </div>
         </div>
 

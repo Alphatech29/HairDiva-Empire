@@ -1,178 +1,174 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCart } from "../utilitys/cartContext";
+import { NIGERIAN_STATES, NIGERIAN_CITIES } from "../utilitys/state";
 import { NavLink } from "react-router-dom";
+import Dropdown from "../components/dropDown";
 
 const Checkout = () => {
-  const { cartItems, total, discount, updateQuantity, removeFromCart } = useCart();
-
-  const VAT_PERCENT = 0.075;
-  const subtotalAfterDiscount = total - discount;
-  const vatAmount = subtotalAfterDiscount * VAT_PERCENT;
-  const totalWithVAT = subtotalAfterDiscount + vatAmount;
+  const { cartItems, subtotal, discount, vatAmount, totalWithVAT } = useCart();
+  const SHIPPING_COST = 2000;
 
   const formatPrice = (price) => `₦${Number(price || 0).toLocaleString()}`;
 
-  const handleQuantityChange = (id, delta) => {
-    const item = cartItems.find((i) => i.id === id);
-    if (!item) return;
-    updateQuantity(id, (item.quantity || 1) + delta);
-  };
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-t from-purple-100 via-yellow-50 to-primary-950 p-6 flex flex-col items-center">
-      <h1 className="text-5xl font-extrabold text-primary-100 mb-10 mt-16">
+    <div className="min-h-screen sm:pt-16 md:pt-36 bg-gradient-to-t from-purple-100 via-yellow-50 to-primary-950 p-6 flex flex-col items-center">
+      <h1 className="text-4xl md:text-5xl font-extrabold text-primary-100 mb-10 mt-8">
         Checkout
       </h1>
 
       {cartItems.length === 0 ? (
-        <div className="bg-white/20 w-full backdrop-blur-lg rounded-3xl p-10 text-center text-primary-950 font-semibold text-xl shadow-md flex flex-col items-center gap-4">
+        <div className="bg-white/20 backdrop-blur-lg w-full max-w-3xl rounded-2xl p-10 shadow-md text-center text-gray-800 flex flex-col items-center gap-4">
           <p>Your cart is empty.</p>
           <NavLink
             to="/shop"
-            className="px-6 py-3 bg-primary-500 text-white font-bold rounded-3xl shadow-lg hover:bg-yellow-600 transition"
+            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-full shadow hover:bg-blue-700 transition"
           >
             Go to Shop
           </NavLink>
         </div>
       ) : (
-        <div className="w-full max-w-6xl bg-white/20 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-white/30 flex flex-col md:flex-row gap-8">
-
-          {/* Left Column: Customer Info */}
+        <div className="w-full max-w-6xl flex flex-col md:flex-row gap-8">
+          {/* Left Column */}
           <div className="flex-1 space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Customer Info</h2>
-            <input
-              type="text"
-              placeholder="Full Name"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-            <input
-              type="email"
-              placeholder="Email Address"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-            <input
-              type="tel"
-              placeholder="Phone Number"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
+            {/* Customer Info */}
+            <div className="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-md">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Customer Info</h2>
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <input
+                  type="tel"
+                  placeholder="Phone Number"
+                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+            </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mt-6">Shipping Address</h2>
-            <input
-              type="text"
-              placeholder="Address"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-            <input
-              type="text"
-              placeholder="City"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-            <input
-              type="text"
-              placeholder="State"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-            <input
-              type="text"
-              placeholder="Zip Code"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
+            {/* Shipping Address */}
+            <div className="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-md relative">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Shipping Address</h2>
+              <div className="space-y-4">
+                {/* State Dropdown */}
+                <Dropdown
+                  options={NIGERIAN_STATES}
+                  selected={selectedState}
+                  onSelect={(val) => {
+                    setSelectedState(val);
+                    setSelectedCity(""); // Reset city when state changes
+                  }}
+                  placeholder="Select State"
+                />
+
+                {/* City Dropdown */}
+                <Dropdown
+                  options={selectedState ? NIGERIAN_CITIES[selectedState] : []}
+                  selected={selectedCity}
+                  onSelect={(val) => setSelectedCity(val)}
+                  placeholder="Select City"
+                  disabled={!selectedState}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Delivery Address"
+                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Right Column: Order Summary */}
-          <div className="w-full md:w-96 space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900">Order Summary</h2>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex justify-between items-center border-b border-white/30 pb-3"
-                >
-                  <div className="flex items-center gap-3">
-                    {item.image && (
-                      <img
-                        src={item.image}
-                        alt={item.product_name}
-                        className="w-16 h-16 object-cover rounded-md shadow"
-                      />
-                    )}
-                    <div className="flex flex-col">
-                      <span className="font-bold text-gray-900">{item.product_name}</span>
-
-                      {/* Color & Variant */}
-                      <div className="flex items-center gap-2 mt-1">
-                        {item.color && (
-                          <span className="px-2 py-1 rounded-full text-white text-xs" style={{ backgroundColor: item.color }}>
-                            {item.color}
-                          </span>
-                        )}
-                        {item.variant?.length && (
-                          <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700 text-xs">
-                            {item.variant.length}""
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Quantity */}
-                      <div className="flex items-center gap-2 mt-2">
-                        <button
-                          onClick={() => handleQuantityChange(item.id, -1)}
-                          className="px-3 py-1 bg-purple-200/70 rounded-lg font-bold hover:bg-purple-300 transition"
-                        >
-                          -
-                        </button>
-                        <span>{item.quantity || 1}</span>
-                        <button
-                          onClick={() => handleQuantityChange(item.id, 1)}
-                          className="px-3 py-1 bg-purple-200/70 rounded-lg font-bold hover:bg-purple-300 transition"
-                        >
-                          +
-                        </button>
-                        <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="ml-2 text-red-500 hover:text-red-700 transition"
-                        >
-                          ×
-                        </button>
+          <div className="w-full md:w-96 flex flex-col gap-6">
+            <div className="bg-white/20 backdrop-blur-lg space-y-8 rounded-2xl p-6 shadow-md">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Order Summary</h2>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex justify-between items-center border-b border-gray-200 pb-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.product_name}
+                          className="w-16 h-16 object-cover rounded-md"
+                        />
+                      )}
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-800">{item.product_name}</span>
+                        <div className="flex items-center gap-2 mt-1">
+                          {item.color && (
+                            <span
+                              className="px-2 py-1 rounded-full text-white text-xs"
+                              style={{ backgroundColor: item.color }}
+                            >
+                              {item.color}
+                            </span>
+                          )}
+                          {item.variant?.length && (
+                            <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700 text-xs">
+                              {item.variant.length}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="font-medium">Qty: {item.quantity}</span>
+                        </div>
                       </div>
                     </div>
+                    <span className="font-semibold text-gray-800">
+                      ₦{Number(item.price * item.quantity).toLocaleString()}
+                    </span>
                   </div>
+                ))}
+              </div>
 
-                  <span className="font-bold text-gray-900">
-                    ₦{Number(item.price * (item.quantity || 1)).toLocaleString()}
-                  </span>
+              {/* Totals */}
+              <div className="mt-4 border-t border-gray-200 pt-4 flex flex-col gap-2">
+                <div className="flex justify-between text-gray-700 font-semibold">
+                  <span>Subtotal:</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
-              ))}
-            </div>
-
-            {/* Totals */}
-            <div className="mt-4 border-t border-white/30 pt-4 flex flex-col gap-2">
-              <div className="flex justify-between text-gray-700 font-semibold">
-                <span>Subtotal:</span>
-                <span>{formatPrice(total)}</span>
-              </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-green-700 font-semibold">
-                  <span>Discount:</span>
-                  <span>- {formatPrice(discount)}</span>
+                <div className="bg-green-50 p-3 rounded-lg border border-green-200 flex justify-between items-center">
+                  <p className="text-green-700 text-lg font-semibold">Discount:</p>
+                  <p className="text-green-600 font-bold">- {formatPrice(discount)}</p>
                 </div>
-              )}
-              <div className="flex justify-between text-gray-700 font-semibold">
-                <span>VAT (7.5%):</span>
-                <span>{formatPrice(vatAmount)}</span>
+                <div className="flex justify-between text-gray-700 font-semibold">
+                  <span>VAT (7.5%):</span>
+                  <span>{formatPrice(vatAmount)}</span>
+                </div>
+                <div className="flex justify-between text-gray-700 font-semibold">
+                  <span>Shipping:</span>
+                  <span>{formatPrice(SHIPPING_COST)}</span>
+                </div>
+                <div className="flex justify-between text-gray-900 font-bold text-xl">
+                  <span>Total:</span>
+                  <span>{formatPrice(totalWithVAT + SHIPPING_COST)}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-gray-900 font-bold text-xl">
-                <span>Total:</span>
-                <span>{formatPrice(totalWithVAT)}</span>
+
+              {/* Proceed Button */}
+              <div className="w-full mt-6">
+                <button
+                  type="submit"
+                  className="w-full px-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 rounded-xl shadow-lg text-center hover:scale-105 transition-transform"
+                >
+                  Proceed
+                </button>
               </div>
             </div>
-
-            <NavLink
-              to="/payment"
-              className="mt-6 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-4 rounded-3xl shadow-xl text-center hover:scale-105 transition-transform"
-            >
-              Proceed to Payment
-            </NavLink>
           </div>
         </div>
       )}

@@ -4,7 +4,7 @@ import { MdCancel } from "react-icons/md";
 import { useCart } from "../utilitys/cartContext";
 
 export default function CartDropdown({ onClose }) {
-  const { cartItems, removeFromCart, total } = useCart();
+  const { cartItems, removeFromCart, subtotal } = useCart();
 
   const formatPrice = (price) => {
     let value = 0;
@@ -74,7 +74,7 @@ export default function CartDropdown({ onClose }) {
             <hr className="my-4 border-gray-200" />
             <div className="flex justify-between font-bold text-gray-900 text-base mb-4">
               <span>Total:</span>
-              <span>{formatPrice(total)}</span>
+              <span>{formatPrice(subtotal)}</span>
             </div>
 
             <NavLink
