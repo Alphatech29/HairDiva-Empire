@@ -1,0 +1,34 @@
+CREATE TABLE hair_products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    hair_type VARCHAR(50),
+    description TEXT,
+    colors JSON NOT NULL,   -- Each color will contain lengths, price, stock, sold, and ONE image
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO hair_products (product_name, hair_type, description, colors, created_at)
+VALUES (
+    ' Natural Wig Black Wavy C Part ',
+    'Wigs',
+    'High-quality human hair wig',
+    JSON_ARRAY(
+        JSON_OBJECT(
+            'color', 'Black',
+            'image', '/image/hair-1.jpg',
+            'variants', JSON_ARRAY(
+                JSON_OBJECT('length', '12', 'price', 5000, 'old_price', 6500, 'stock', 300, 'sold', 0),
+                JSON_OBJECT('length', '16', 'price', 5200, 'old_price', 6700, 'stock', 200, 'sold', 0)
+            )
+        ),
+        JSON_OBJECT(
+            'color', 'Blonde',
+            'image', '/image/hair-3.jpg',
+            'variants', JSON_ARRAY(
+                JSON_OBJECT('length', '12', 'price', 5100, 'old_price', 6600, 'stock', 200, 'sold', 0),
+                JSON_OBJECT('length', '16', 'price', 5300, 'old_price', 6800, 'stock', 150, 'sold', 0)
+            )
+        )
+    ),
+    '2025-09-05 17:38:54'
+);

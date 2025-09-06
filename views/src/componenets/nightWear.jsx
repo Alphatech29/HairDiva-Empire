@@ -6,7 +6,7 @@ import {
   FaEye,
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import { useCart } from "../utilitys/cartContext"; // adjust path if needed
+import { useCart } from "../utilitys/cartContext";
 
 const nightWearProducts = [
   {

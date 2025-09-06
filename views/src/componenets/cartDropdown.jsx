@@ -39,19 +39,21 @@ export default function CartDropdown({ onClose }) {
                   {item.image && (
                     <img
                       src={item.image}
-                      alt={item.name}
+                      alt={item.product_name || "Product"}
                       className="w-12 h-12 object-cover rounded-md"
                     />
                   )}
                   <div className="flex flex-col">
-                    <span className="font-medium text-gray-800 line-clamp-1">{item.name}</span>
+                    <span className="font-medium text-gray-800 line-clamp-1">
+                      {item.product_name || "Unnamed Product"}
+                    </span>
                     <span className="font-semibold text-sm text-gray-900">
-                    {formatPrice(item.price)}
-                  </span>
+                      {formatPrice(item.price)}
+                      {item.quantity > 1 && ` x${item.quantity}`}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-
                   <button
                     onClick={() => removeFromCart(item.id)}
                     className="text-gray-400 hover:text-red-500 transition text-xl"
@@ -76,7 +78,7 @@ export default function CartDropdown({ onClose }) {
             </div>
 
             <NavLink
-              to="/cart"
+              to="/shop/cart"
               className="block text-center bg-primary-600 text-white py-2 rounded-lg font-semibold shadow hover:bg-primary-700 transition duration-300"
               onClick={onClose}
             >

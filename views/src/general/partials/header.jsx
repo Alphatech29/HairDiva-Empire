@@ -33,7 +33,7 @@ export default function Header() {
   }, []);
 
   const baseClasses = "transition px-3 py-2 block";
-  const activeClasses = "font-semibold border-b-2";
+  const activeClasses = "font-semibold text-primary-500 ";
 
   return (
     <header className="fixed w-full z-50">
@@ -113,7 +113,7 @@ export default function Header() {
             <div className="relative" ref={cartRef}>
               <button
                 onClick={toggleCart}
-                className={`${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-primary-300"} relative`}
+                className={`${scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-primary-300"} relative mt-3`}
               >
                 <FaShoppingCart />
                 {cartCount > 0 && (
