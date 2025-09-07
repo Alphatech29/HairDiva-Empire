@@ -61,7 +61,7 @@ export default function ProductCard({ product, isInCart, handleCartClick }) {
 
         {/* Mobile Price */}
         <div className="sm:block md:hidden mb-2">
-          <span className="text-sm sm:text-xs font-bold text-primary-900">{product.price}</span>
+          <span className="text-sm sm:text-xs font-bold text-primary-900">{product.price}-</span>
           {product.oldPrice && (
             <span className="text-sm line-through text-primary-400 ml-2">
               {product.oldPrice}

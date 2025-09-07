@@ -10,8 +10,80 @@ const Checkout = () => {
 
   const formatPrice = (price) => `₦${Number(price || 0).toLocaleString()}`;
 
+  // Form States
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+
+  // Validation Errors
+  const [errors, setErrors] = useState({});
+
+  // Validate inputs
+  const validateForm = () => {
+    const newErrors = {};
+    if (!fullName.trim()) newErrors.fullName = "Full name is required";
+    if (!email.trim()) newErrors.email = "Email address is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Invalid email format";
+    if (!phone.trim()) newErrors.phone = "Phone number is required";
+    else if (!/^\d{11}$/.test(phone)) newErrors.phone = "Phone number must be 11 digits";
+    if (!selectedState) newErrors.state = "Please select a state";
+    if (!selectedCity) newErrors.city = "Please select a city";
+    if (!address.trim()) newErrors.address = "Delivery address is required";
+    return newErrors;
+  };
+
+  // Handle Proceed
+  const handleProceed = () => {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({}); // Clear errors if valid
+
+    const payload = {
+      customer: {
+        fullName,
+        email,
+        phone,
+      },
+      shipping: {
+        state: selectedState,
+        city: selectedCity,
+        address,
+      },
+      order: {
+        items: cartItems.map((item) => ({
+          id: item.id,
+          price: item.price,
+          quantity: item.quantity,
+          color: item.color || null,
+          variant: item.variant || null,
+          total: item.price * item.quantity,
+        })),
+        summary: {
+          subtotal,
+          discount,
+          vat: vatAmount,
+          shipping: SHIPPING_COST,
+          grandTotal: totalWithVAT + SHIPPING_COST,
+        },
+      },
+    };
+
+    console.log("Checkout Payload:", payload);
+
+    // 👉 Replace with API call if needed
+    // fetch("/api/checkout", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(payload),
+    // });
+  };
 
   return (
     <div className="min-h-screen sm:pt-16 md:pt-36 bg-gradient-to-t from-purple-100 via-yellow-50 to-primary-950 p-6 flex flex-col items-center">
@@ -37,21 +109,42 @@ const Checkout = () => {
             <div className="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-md">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Customer Info</h2>
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input
-                  type="tel"
-                  placeholder="Phone Number"
-                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  {errors.fullName && (
+                    <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  {errors.email && (
+                    <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  {errors.phone && (
+                    <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -59,31 +152,46 @@ const Checkout = () => {
             <div className="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-md relative">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Shipping Address</h2>
               <div className="space-y-4">
-                {/* State Dropdown */}
-                <Dropdown
-                  options={NIGERIAN_STATES}
-                  selected={selectedState}
-                  onSelect={(val) => {
-                    setSelectedState(val);
-                    setSelectedCity(""); // Reset city when state changes
-                  }}
-                  placeholder="Select State"
-                />
+                <div>
+                  <Dropdown
+                    options={NIGERIAN_STATES}
+                    selected={selectedState}
+                    onSelect={(val) => {
+                      setSelectedState(val);
+                      setSelectedCity("");
+                    }}
+                    placeholder="Select State"
+                  />
+                  {errors.state && (
+                    <p className="text-red-600 text-sm mt-1">{errors.state}</p>
+                  )}
+                </div>
 
-                {/* City Dropdown */}
-                <Dropdown
-                  options={selectedState ? NIGERIAN_CITIES[selectedState] : []}
-                  selected={selectedCity}
-                  onSelect={(val) => setSelectedCity(val)}
-                  placeholder="Select City"
-                  disabled={!selectedState}
-                />
+                <div>
+                  <Dropdown
+                    options={selectedState ? NIGERIAN_CITIES[selectedState] : []}
+                    selected={selectedCity}
+                    onSelect={(val) => setSelectedCity(val)}
+                    placeholder="Select City"
+                    disabled={!selectedState}
+                  />
+                  {errors.city && (
+                    <p className="text-red-600 text-sm mt-1">{errors.city}</p>
+                  )}
+                </div>
 
-                <input
-                  type="text"
-                  placeholder="Delivery Address"
-                  className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Delivery Address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full p-3 bg-white/30 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  {errors.address && (
+                    <p className="text-red-600 text-sm mt-1">{errors.address}</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -107,7 +215,9 @@ const Checkout = () => {
                         />
                       )}
                       <div className="flex flex-col">
-                        <span className="font-semibold text-gray-800">{item.product_name}</span>
+                        <span className="font-semibold text-gray-800">
+                          {item.product_name}
+                        </span>
                         <div className="flex items-center gap-2 mt-1">
                           {item.color && (
                             <span
@@ -162,7 +272,8 @@ const Checkout = () => {
               {/* Proceed Button */}
               <div className="w-full mt-6">
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleProceed}
                   className="w-full px-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 rounded-xl shadow-lg text-center hover:scale-105 transition-transform"
                 >
                   Proceed

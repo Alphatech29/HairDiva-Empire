@@ -245,7 +245,7 @@ const Cart = () => {
 
               <NavLink
                 to="/shop/check-out"
-                className="mt-6 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-4 rounded-3xl shadow-xl text-center block hover:scale-105 transition-transform"
+                className="mt-6 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 rounded-3xl shadow-xl text-center block hover:scale-105 transition-transform"
               >
                 Proceed to Checkout
               </NavLink>
