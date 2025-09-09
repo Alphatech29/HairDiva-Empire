@@ -12,14 +12,19 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-const bodyParser = express.json({ limit: "1mb" });
+const bodyParser = express.json({ limit: "10mb" });
 
 function validateRequest(req, res, next) {
-  if (req.method === "POST" && !req.is("application/json")) {
-    return res.status(400).json({ error: "Content-Type must be application/json" });
+  if (
+    req.method === "POST" &&
+    !req.is("application/json") &&
+    !req.is("multipart/form-data")
+  ) {
+    return res.status(400).json({ error: "Content-Type must be application/json or multipart/form-data" });
   }
   next();
 }
+
 
 function enforceHTTPS(req, res, next) {
   if (req.secure || req.headers["x-forwarded-proto"] === "https") {

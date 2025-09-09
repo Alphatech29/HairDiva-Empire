@@ -1,9 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "./authContext";
+import { useAuth } from "./authContext";
 
 export default function ShopPrivateRoute() {
-  const { token } = useContext(AuthContext);
+  const { token } = useAuth();
 
   return token ? <Outlet /> : <Navigate to="/auth/login" replace />;
 }

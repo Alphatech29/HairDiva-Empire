@@ -15,8 +15,9 @@ import { AuthProvider } from "./utilitys/authContext";
 function Layout({ children }) {
   const location = useLocation();
 
-  // Hide header and footer on login page
-  const hideHeaderFooter = location.pathname === "/auth/login";
+  // Hide header/footer on login page and store routes
+  const hideHeaderFooter =
+    location.pathname === "/auth/login" || location.pathname.startsWith("/store");
 
   return (
     <>
@@ -30,25 +31,24 @@ function Layout({ children }) {
 export default function App() {
   return (
     <Router>
-       <AuthProvider>
-      <CartProvider>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth/login" element={<Login />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/shop/cart" element={<Cart />} />
-            <Route path="/shop/check-out" element={<Checkout />} />
-            <Route path="/shop/product/:slugId" element={<SingleProduct />} />
+      <AuthProvider>
+        <CartProvider>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth/login" element={<Login />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/shop/cart" element={<Cart />} />
+              <Route path="/shop/check-out" element={<Checkout />} />
+              <Route path="/shop/product/:slugId" element={<SingleProduct />} />
 
-             {/* Protected Admin Routes */}
-            <Route element={<ShopPrivateRoute />}>
-              <Route path="/store/*" element={<Shoproute />} />
-            </Route>
-
-          </Routes>
-        </Layout>
-      </CartProvider>
+              {/* Protected Admin Routes */}
+              <Route element={<ShopPrivateRoute />}>
+                <Route path="/store/*" element={<Shoproute />} />
+              </Route>
+            </Routes>
+          </Layout>
+        </CartProvider>
       </AuthProvider>
     </Router>
   );

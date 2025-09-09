@@ -11,23 +11,24 @@ export const loginUser = async (email, password) => {
         },
       }
     );
-    const userData = response.data.data || null;
+
+    const { success, message, token, data } = response.data;
 
     console.log("Login response:", response.data);
 
     return {
-      success: response.data.success,
-      message: response.data.message,
-      data: userData,
+      success,
+      message,
+      token,
+      data: data || null,
     };
   } catch (error) {
     console.error("Login failed:", error.response?.data);
 
     return {
       success: false,
-      message: error.response?.data?.message,
+      message: error.response?.data?.message || "Login failed",
       error: error.response?.data,
     };
   }
 };
-

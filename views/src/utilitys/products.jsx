@@ -2,24 +2,36 @@ import axios from "axios";
 
 export const getAllProducts = async () => {
   try {
-    const response = await axios.get(`/api/products`, {
+    const response = await axios.get("/api/products", {
       headers: {
         "Content-Type": "application/json",
       },
     });
 
+    // Ensure we have a proper array of products
     const products =
-      response.data.success && Array.isArray(response.data.data)
+      response.data?.success && Array.isArray(response.data.data)
         ? response.data.data
         : [];
 
-    // Log the products to the console
-    console.log("Fetched products:", products);
+    // Optional: convert variant prices to strings (if needed)
+    const formattedProducts = products.map(product => ({
+      ...product,
+      variants: Array.isArray(product.variants)
+        ? product.variants.map(variant => ({
+            ...variant,
+            price: variant.price.toString(),
+            old_price: variant.old_price?.toString() || null,
+          }))
+        : [],
+    }));
+
+    console.log("Fetched products:", formattedProducts);
 
     return {
       success: true,
       message: "Products retrieved successfully!",
-      data: products,
+      data: formattedProducts,
     };
   } catch (error) {
     console.error(
@@ -36,6 +48,7 @@ export const getAllProducts = async () => {
     };
   }
 };
+
 
 // Fetch a single product by ID
 export const getProductById = async (id) => {
@@ -74,3 +87,29 @@ export const getProductById = async (id) => {
   }
 };
 
+
+
+export const addHairProduct = async (formData) => {
+  try {
+    const response = await axios.post("/api/add-products", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return {
+      success: true,
+      message: response.data?.message || "Product added successfully",
+      data: response.data?.data || null,
+    };
+  } catch (error) {
+    const serverMessage = error.response?.data?.message;
+    const serverData = error.response?.data;
+
+    console.error("Adding hair product failed:", serverMessage || error.message);
+
+    return {
+      success: false,
+      message: serverMessage || "Failed to add product",
+      error: serverData || error.message,
+    };
+  }
+};

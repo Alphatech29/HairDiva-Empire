@@ -12,6 +12,7 @@ const {
   validateRequest,
   enforceHTTPS,
 } = require("./middleWare/apiSecurity");
+const { upload, uploadErrorHandler } = require('./utility/multerConfig');
 
 dotenv.config({ silent: false });
 
@@ -25,9 +26,19 @@ app.set("trust proxy", process.env.NODE_ENV === "production" ? 1 : 0);
 app.use(securityHeaders);
 app.use(bodyParser);
 
+// ===== Serve Uploads Folder from public/uploads =====
+const uploadsPath = path.join(__dirname, "public", "uploads");
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+app.use("/uploads", express.static(uploadsPath));
+
 // ===== API Middleware & Routes =====
 app.use("/api", apiLimiter);
 app.use("/api", validateRequest);
+
+// Apply Multer globally to all /api routes
+app.use("/api", upload.any());
 app.use("/api", generalRoute);
 
 // ===== Serve Frontend SPA =====
@@ -51,6 +62,7 @@ if (!fs.existsSync(staticPath)) {
 }
 
 // ===== Global Error Handler =====
+app.use(uploadErrorHandler);
 app.use((err, req, res, next) => {
   logger.error(err.message, {
     stack: err.stack,
@@ -94,7 +106,6 @@ const startServer = () => {
       process.exit(1);
     }
   } else {
-    // Development HTTPS fallback
     const devKey = path.join(__dirname, "certs", "key.pem");
     const devCert = path.join(__dirname, "certs", "cert.pem");
 
@@ -104,11 +115,11 @@ const startServer = () => {
         cert: fs.readFileSync(devCert),
       };
       https.createServer(options, app).listen(PORT, () => {
-        console.log(`Server conneted`);
+        console.log(`Server connected`);
       });
     } else {
       app.listen(PORT, () => {
-       console.log(`Server conneted`);
+        console.log(`Server connected`);
       });
       console.log("Dev SSL certs not found. HTTP server running instead of HTTPS.");
     }

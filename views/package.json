@@ -11,12 +11,16 @@
     "watch": "chokidar \"src/**/*\" -c \"npm run build\""
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.31.0",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/list": "^2.0.8",
     "@tsparticles/react": "^3.0.0",
     "axios": "^1.11.0",
     "chokidar": "^4.0.3",
     "crypto-js": "^4.2.0",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.542.0",
+    "quill": "^2.0.3",
     "react": "^19.1.1",
     "react-country-flag": "^3.1.0",
     "react-dom": "^19.1.1",

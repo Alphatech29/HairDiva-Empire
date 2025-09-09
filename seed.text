@@ -3,10 +3,38 @@ CREATE TABLE hair_products (
     product_name VARCHAR(100) NOT NULL,
     hair_type VARCHAR(50),
     description TEXT,
-    colors JSON NOT NULL,   -- Each color will contain lengths, price, stock, sold, and ONE image
-    tag VARCHAR(50),        -- Single tag for the product
+    color VARCHAR(50),
+    tag VARCHAR(50),
+    image_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO hair_products
+(product_name, hair_type, description, color, tag, image_url)
+VALUES
+('Silky Straight Hair', 'wig', 'Smooth and shiny synthetic hair.', 'Black', 'new', '/image/hair-1.jpg');
+
+
+CREATE TABLE hair_variants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,          -- link to main product
+    length VARCHAR(50) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,     -- current price
+    old_price DECIMAL(10,2),          -- old price (nullable)
+    stock INT DEFAULT 0,
+    sold INT DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES hair_products(id) ON DELETE CASCADE
+);
+
+
+INSERT INTO hair_variants (product_id, length, price, old_price, stock, sold)
+VALUES
+(1, '10in', 50.00, 60.00, 10, 0),
+(1, '12in', 60.00, 70.00, 8, 0),
+(1, '14in', 70.00, 80.00, 5, 0);
+
+
+
 
 
 INSERT INTO hair_products (product_name, hair_type, description, colors, tag, created_at)
