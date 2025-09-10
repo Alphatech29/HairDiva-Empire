@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { getAllProducts } from "../../utilitys/products";
-import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { getAllProducts, deleteProductById } from "../../utilitys/products";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
+import SweetAlert from "../../utilitys/sweetAlert";
 
 export default function ProductInventoryResponsive() {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loadingDeleteId, setLoadingDeleteId] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -15,9 +17,36 @@ export default function ProductInventoryResponsive() {
     fetchProducts();
   }, []);
 
+  const handleDelete = async (id) => {
+    // SweetAlert confirmation
+    const confirmed = await SweetAlert.confirm(
+      "Are you sure?",
+      "This action will permanently delete the product.",
+      "Yes, delete it!",
+      "Cancel"
+    );
+
+    if (!confirmed) return;
+
+    setLoadingDeleteId(id);
+    const result = await deleteProductById(id);
+    setLoadingDeleteId(null);
+
+    if (result.success) {
+      setProducts((prev) => prev.filter((product) => product.id !== id));
+      SweetAlert.alert("Deleted!", result.message, "success");
+    } else {
+      SweetAlert.alert(
+        "Error!",
+        result.message || "Failed to delete product.",
+        "error"
+      );
+    }
+  };
+
   const filteredProducts = products.filter((product) =>
     searchQuery
-      ? product.product_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      ? product.barcode?.toLowerCase().includes(searchQuery.toLowerCase())
       : true
   );
 
@@ -29,7 +58,7 @@ export default function ProductInventoryResponsive() {
           placeholder="Search products..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border rounded-xl px-3 py-2 flex-1 max-w-[150px] sm:min-w-[250px]"
+          className="border rounded-xl px-3 py-2 flex-1 max-w-[150px] sm:min-w-[200px]"
         />
         <NavLink
           to="/store/products/add"
@@ -39,7 +68,8 @@ export default function ProductInventoryResponsive() {
         </NavLink>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-4">
+      {/* Mobile / small screens */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-2">
         {filteredProducts.map((product, index) => {
           const totalStock =
             product.variants?.reduce((sum, v) => sum + v.stock, 0) || 0;
@@ -94,12 +124,6 @@ export default function ProductInventoryResponsive() {
 
               <div className="flex gap-2 mt-auto flex-wrap">
                 <button
-                  className="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg flex-1 text-xs sm:text-sm"
-                  title="View"
-                >
-                  <FiEye size={16} className="text-gray-600" />
-                </button>
-                <button
                   className="bg-orange-100 hover:bg-orange-200 p-2 rounded-lg flex-1 text-xs sm:text-sm"
                   title="Edit"
                 >
@@ -108,8 +132,15 @@ export default function ProductInventoryResponsive() {
                 <button
                   className="bg-red-100 hover:bg-red-200 p-2 rounded-lg flex-1 text-xs sm:text-sm"
                   title="Delete"
+                  onClick={() => handleDelete(product.id)}
+                  disabled={loadingDeleteId === product.id}
                 >
-                  <FiTrash2 size={16} className="text-red-600" />
+                  <FiTrash2
+                    size={16}
+                    className={`text-red-600 ${
+                      loadingDeleteId === product.id ? "animate-pulse" : ""
+                    }`}
+                  />
                 </button>
               </div>
             </div>
@@ -117,12 +148,16 @@ export default function ProductInventoryResponsive() {
         })}
       </div>
 
+      {/* Desktop / larger screens */}
       <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full border border-gray-200 rounded-xl overflow-hidden">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 S/N
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                Barcode
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 Product
@@ -163,15 +198,17 @@ export default function ProductInventoryResponsive() {
               return (
                 <tr key={product.id}>
                   <td className="px-4 py-2 font-medium text-sm">{index + 1}</td>
+                  <td className="px-4 py-2 font-medium text-sm">
+                    {product.barcode || "-"}
+                  </td>
                   <td className="px-4 py-2 flex items-center gap-3 w-80 ">
                     <img
                       src={product.image_url}
                       alt={product.product_name}
                       className="w-12 h-12 object-cover rounded"
                     />
-
                     <div className="flex flex-col gap-2 items-start justify-start">
-                      <span className="font-medium text-sm line-clamp-2">
+                      <span className="font-medium text-[12px] line-clamp-2">
                         {product.product_name}
                       </span>
                       <span className="text-gray-400 text-xs text-start">
@@ -181,7 +218,7 @@ export default function ProductInventoryResponsive() {
                   </td>
                   <td className="px-4 py-2">
                     <div className="flex flex-col items-start justify-start">
-                      <span className="font-medium text-sm">
+                      <span className="font-medium text-[12px]">
                         {totalStock} Left
                       </span>
                       <span className="text-gray-400 text-xs text-start">
@@ -189,8 +226,10 @@ export default function ProductInventoryResponsive() {
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-2 font-medium text-sm">₦{price}</td>
-                  <td className="px-4 py-2 font-medium text-sm">
+                  <td className="px-4 py-2 font-medium text-[12px]">
+                    ₦{price}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-[12px]">
                     {product.hair_type || "-"}
                   </td>
                   <td className="px-4 py-2">
@@ -201,23 +240,26 @@ export default function ProductInventoryResponsive() {
                     </span>
                   </td>
                   <td className="px-4 py-2 flex gap-2">
-                    <button
-                      className="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg"
-                      title="View"
-                    >
-                      <FiEye size={16} className="text-gray-600" />
-                    </button>
-                    <button
-                      className="bg-orange-100 hover:bg-orange-200 p-2 rounded-lg"
+                    <NavLink
+                      to={`/store/products/edit/${product.id}`}
+                      className="bg-orange-100 hover:bg-orange-200 p-2 rounded-lg flex-1 text-xs sm:text-sm flex items-center justify-center"
                       title="Edit"
                     >
                       <FiEdit size={16} className="text-orange-600" />
-                    </button>
+                    </NavLink>
+
                     <button
                       className="bg-red-100 hover:bg-red-200 p-2 rounded-lg"
                       title="Delete"
+                      onClick={() => handleDelete(product.id)}
+                      disabled={loadingDeleteId === product.id}
                     >
-                      <FiTrash2 size={16} className="text-red-600" />
+                      <FiTrash2
+                        size={16}
+                        className={`text-red-600 ${
+                          loadingDeleteId === product.id ? "animate-pulse" : ""
+                        }`}
+                      />
                     </button>
                   </td>
                 </tr>

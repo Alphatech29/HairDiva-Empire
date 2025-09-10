@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaShoppingCart, FaMinus, FaPlus, FaShoppingBasket } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaMinus,
+  FaPlus,
+  FaShoppingBasket,
+} from "react-icons/fa";
 import { getProductById } from "../utilitys/products";
 import { useCart } from "../utilitys/cartContext";
 
 const SingleProduct = () => {
   const { slugId } = useParams();
   const [product, setProduct] = useState(null);
-  const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
@@ -48,10 +52,10 @@ const SingleProduct = () => {
   if (error) return <ErrorDisplay message={error} />;
   if (!product) return <ErrorDisplay message="Product not found." />;
 
-  const colors = product.colors || [];
-  const selectedColor = colors[selectedColorIndex] || {};
-  const variants = selectedColor.variants || [];
+  // ✅ API gives flat variants + single color
+  const variants = product.variants || [];
   const selectedVariant = variants[selectedVariantIndex] || {};
+  const productColor = product.color || null;
 
   const increaseQuantity = () => setQuantity((q) => q + 1);
   const decreaseQuantity = () => setQuantity((q) => Math.max(1, q - 1));
@@ -60,8 +64,8 @@ const SingleProduct = () => {
     addToCart({
       id: product.id,
       product_name: product.product_name,
-      image: selectedColor.image || product.image || "",
-      color: selectedColor.color || null,
+      image: product.image_url || product.image || "",
+      color: productColor,
       variant: selectedVariant,
       price: selectedVariant.price || product.price || 0,
       quantity,
@@ -82,7 +86,7 @@ const SingleProduct = () => {
         {/* Images */}
         <div className="flex flex-col gap-4">
           <motion.img
-            src={selectedColor.image || product.image || ""}
+            src={product.image_url || product.image || ""}
             alt={product.product_name}
             className="rounded-2xl object-cover w-full h-[420px] shadow-lg"
           />
@@ -91,35 +95,42 @@ const SingleProduct = () => {
         {/* Product Info */}
         <div className="h-auto flex flex-col justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-3">{product.product_name}</h1>
+            <h1 className="md:text-3xl sm:text-lg font-bold mb-3">{product.product_name}</h1>
 
             {/* Price */}
             <p className="text-2xl font-bold text-primary mt-6">
-              ₦{selectedVariant.price?.toLocaleString() || "0"}
+              ₦{parseInt(selectedVariant.price || 0, 10).toLocaleString()}
               {selectedVariant.old_price && (
-                <span className="line-through text-gray-400 text-sm ml-3">
-                  ₦{selectedVariant.old_price.toLocaleString()}
+                <span className="line-through text-primary-500 text-sm ml-3">
+                  ₦{parseInt(selectedVariant.old_price, 10).toLocaleString()}
                 </span>
               )}
             </p>
 
+
             {/* Variant Selector */}
             <div className="flex items-center gap-2 mt-5">
-              <span>Length: </span>
+              <span>
+                {product.hair_type === "Night Wears" ? "Size:" : "Length:"}
+              </span>
               <div className="flex gap-3 flex-wrap">
                 {variants.length > 0 ? (
                   variants.map((variant, idx) => (
                     <button
                       key={idx}
                       className={`px-4 py-2 rounded-lg shadow-md border ${
-                        selectedVariantIndex === idx ? "bg-yellow-200" : "border-gray-300"
+                        selectedVariantIndex === idx
+                          ? "bg-yellow-200"
+                          : "border-gray-300"
                       }`}
                       onClick={() => {
                         setSelectedVariantIndex(idx);
                         setQuantity(1);
                       }}
                     >
-                      {variant.length}" inches
+                      {product.hair_type === "Night Wears"
+                        ? variant.length
+                        : `${variant.length} inches`}{" "}
                     </button>
                   ))
                 ) : (
@@ -145,27 +156,25 @@ const SingleProduct = () => {
               </button>
             </div>
 
-            {/* Color Buttons */}
-            <div className="flex items-center gap-2 mt-5">
-              <span>Color:</span>
-              <div className="flex items-center gap-3">
-                {colors.map((color, idx) => (
-                  <button
-                    key={idx}
-                    className={`px-3 py-2 flex justify-center items-center border rounded-md hover:bg-gray-100 transition ${
-                      selectedColorIndex === idx ? "bg-yellow-200" : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedColorIndex(idx);
-                      setSelectedVariantIndex(0);
-                      setQuantity(1);
-                    }}
-                  >
-                    {color.color || `Color ${idx + 1}`}
-                  </button>
-                ))}
+            {/* Color */}
+            {productColor && (
+              <div className="flex items-center gap-2 mt-5">
+                <span>Color:</span>
+                <button
+                  className="px-3 py-2 border rounded-md text-sm font-medium"
+                  style={{
+                    backgroundColor: productColor.toLowerCase(),
+                    color:
+                      productColor.toLowerCase() === "black" ||
+                      productColor.toLowerCase() === "#000"
+                        ? "#fff"
+                        : "#000",
+                  }}
+                >
+                  {productColor}
+                </button>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Add to Cart */}
@@ -202,7 +211,9 @@ const SingleProduct = () => {
           <div className="flex gap-4">
             <button
               className={`px-4 py-2 font-semibold rounded-t-lg transition ${
-                activeTab === "description" ? "bg-yellow-200 text-primary-900" : "bg-gray-200 text-gray-700"
+                activeTab === "description"
+                  ? "bg-yellow-200 text-primary-900"
+                  : "bg-gray-200 text-gray-700"
               }`}
               onClick={() => setActiveTab("description")}
             >
@@ -210,7 +221,9 @@ const SingleProduct = () => {
             </button>
             <button
               className={`px-4 py-2 font-semibold rounded-t-lg transition ${
-                activeTab === "reviews" ? "bg-yellow-200 text-primary-900" : "bg-gray-200 text-gray-700"
+                activeTab === "reviews"
+                  ? "bg-yellow-200 text-primary-900"
+                  : "bg-gray-200 text-gray-700"
               }`}
               onClick={() => setActiveTab("reviews")}
             >

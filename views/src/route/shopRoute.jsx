@@ -4,6 +4,7 @@ import Dashboard from "../general/shop/dashboard";
 import Home from "../general/shop/index";
 import Products from "../general/shop/products";
 import AddProduct from "../general/shop/addProduct";
+import EditProduct from "../general/shop/editProduct";
 
 export default function ShopRoute() {
   return (
@@ -12,6 +13,7 @@ export default function ShopRoute() {
         <Route index element={<Home />} />
         <Route path="products" element={<Products/>}></Route>
         <Route path="products/add" element={<AddProduct/>}></Route>
+        <Route path="products/edit/:id" element={<EditProduct/>}></Route>
       </Route>
     </Routes>
   );

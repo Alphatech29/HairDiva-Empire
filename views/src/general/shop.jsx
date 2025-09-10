@@ -26,12 +26,18 @@ const fadeUp = {
   }),
 };
 
+// Helper to format prices
+const formatPrice = (price) => {
+  if (!price) return 0;
+  return parseInt(price, 10).toLocaleString();
+};
+
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [products, setProducts] = useState([]);
   const { cartItems, addToCart, removeFromCart } = useCart();
 
-  // Fetch products from API
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await getAllProducts();
@@ -107,13 +113,22 @@ const Shop = () => {
           {filteredProducts.map((product, idx) => {
             const isAdded = cartItems.find((item) => item.id === product.id);
 
-            // fallback data
-            const fallbackPrice =
-              product.colors?.[0]?.variants?.[0]?.price || 0;
-            const fallbackOldPrice =
-              product.colors?.[0]?.variants?.[0]?.old_price || null;
+            // find lowest price from variants
+            let fallbackPrice = 0;
+            let fallbackOldPrice = null;
+
+            if (product.variants?.length > 0) {
+              const sorted = [...product.variants].sort(
+                (a, b) => parseFloat(a.price) - parseFloat(b.price)
+              );
+              fallbackPrice = formatPrice(sorted[0].price);
+              fallbackOldPrice = sorted[0].old_price
+                ? formatPrice(sorted[0].old_price)
+                : null;
+            }
+
             const fallbackImage =
-              product.colors?.[0]?.image || "/image/placeholder.jpg";
+              product.image_url || "/image/placeholder.jpg";
 
             const productSlug = slugify(product.product_name);
             const productUrl = `/shop/product/${productSlug}-${product.id}`;

@@ -5,8 +5,6 @@ function generateUniqueBarcode(length = 13) {
 
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let barcode;
-
-  // Generate barcode starting with a letter and followed by digits
   const randomLetterIndex = crypto.randomInt(0, letters.length);
   barcode = letters.charAt(randomLetterIndex);
 

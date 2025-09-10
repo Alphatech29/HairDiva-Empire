@@ -8,13 +8,11 @@ export const getAllProducts = async () => {
       },
     });
 
-    // Ensure we have a proper array of products
     const products =
       response.data?.success && Array.isArray(response.data.data)
         ? response.data.data
         : [];
 
-    // Optional: convert variant prices to strings (if needed)
     const formattedProducts = products.map(product => ({
       ...product,
       variants: Array.isArray(product.variants)
@@ -25,8 +23,6 @@ export const getAllProducts = async () => {
           }))
         : [],
     }));
-
-    console.log("Fetched products:", formattedProducts);
 
     return {
       success: true,
@@ -50,10 +46,9 @@ export const getAllProducts = async () => {
 };
 
 
-// Fetch a single product by ID
 export const getProductById = async (id) => {
   try {
-    const response = await axios.get(`/api/product/${id}`, {
+    const response = await axios.get(`/api/products/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -64,7 +59,9 @@ export const getProductById = async (id) => {
         ? response.data.data
         : null;
 
-    console.log("Fetched product:", product);
+    if (product) {
+      product.variants = Array.isArray(product.variants) ? product.variants : [];
+    }
 
     return {
       success: true,
@@ -88,6 +85,41 @@ export const getProductById = async (id) => {
 };
 
 
+
+// Delete a product by ID
+export const deleteProductById = async (id) => {
+  try {
+    const response = await axios.delete(`/api/products/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const deletedProduct =
+      response.data.success && response.data.data
+        ? response.data.data
+        : null;
+
+    return {
+      success: true,
+      message: `Product deleted successfully!`,
+      data: deletedProduct,
+    };
+  } catch (error) {
+    console.error(
+      `Deleting product failed:`,
+      error.response?.data || error.message
+    );
+
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        `An error occurred while deleting product with ID ${id}.`,
+      error: error.response?.data || error.message,
+    };
+  }
+};
 
 export const addHairProduct = async (formData) => {
   try {
@@ -113,3 +145,44 @@ export const addHairProduct = async (formData) => {
     };
   }
 };
+
+
+export const updateHairProduct = async (productId, formData) => {
+  if (!productId) {
+    return {
+      success: false,
+      message: "Product ID is required for update",
+    };
+  }
+
+  try {
+    const response = await axios.put(`/api/update-products/${productId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    // Extract backend response safely
+    const resData = response.data || {};
+    const success = resData.success === true;
+    const message = resData.message || (success ? "Product updated successfully" : "Failed to update product");
+    const data = resData.data || null;
+
+    return {
+      success,
+      message,
+      data,
+    };
+  } catch (error) {
+    // Extract backend error messages if available
+    const serverData = error.response?.data || {};
+    const serverMessage = serverData.message || error.message || "Something went wrong";
+
+    console.error("Updating hair product failed:", serverMessage);
+
+    return {
+      success: false,
+      message: serverMessage,
+      error: serverData || error.message,
+    };
+  }
+};
+

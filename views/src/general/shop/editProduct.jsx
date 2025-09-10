@@ -1,8 +1,8 @@
-// AddProduct.js
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { FiPlus, FiTrash2, FiChevronDown } from "react-icons/fi";
 import SweetAlert from "../../utilitys/sweetAlert";
-import { addHairProduct } from "../../utilitys/products";
+import { updateHairProduct, getProductById } from "../../utilitys/products";
 
 // ---------------- CustomDropdown ----------------
 const CustomDropdown = ({ options, value, onChange, placeholder }) => {
@@ -38,8 +38,12 @@ const CustomDropdown = ({ options, value, onChange, placeholder }) => {
 };
 
 // ---------------- ImageUploader ----------------
-const ImageUploader = ({ onFileSelect }) => {
-  const [imagePreview, setImagePreview] = useState(null);
+const ImageUploader = ({ image, onFileSelect }) => {
+  const [imagePreview, setImagePreview] = useState(image || null);
+
+  useEffect(() => {
+    setImagePreview(image || null);
+  }, [image]);
 
   const handleFiles = (files) => {
     const file = files[0];
@@ -47,7 +51,7 @@ const ImageUploader = ({ onFileSelect }) => {
 
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
-      alert("Only PNG, JPG, and JPEG files are allowed.");
+      SweetAlert.alert("Error", "Only PNG, JPG, and JPEG files are allowed.", "error");
       return;
     }
 
@@ -62,7 +66,7 @@ const ImageUploader = ({ onFileSelect }) => {
     >
       {imagePreview ? (
         <img
-          src={imagePreview}
+          src={typeof imagePreview === "string" ? imagePreview : URL.createObjectURL(imagePreview)}
           alt="Preview"
           className="mx-auto rounded-xl object-cover w-full max-w-md h-48 md:h-64 border shadow-sm"
         />
@@ -176,27 +180,98 @@ const VariantsTable = ({ variants, errors, onVariantChange, addVariant, removeVa
   );
 };
 
-// ---------------- AddProduct ----------------
-export default function AddProduct() {
+// ---------------- EditProduct Component ----------------
+export default function EditProduct() {
+  const { id: productId } = useParams();
   const categories = ["Wigs", "Luxury Hair", "Human Hair", "Others", "Night Wears"];
   const tags = ["New", "Sale", "Popular", "Hot"];
 
-  const [variants, setVariants] = useState([{ size: "", stock: "", price: "", oldPrice: "" }]);
-  const [product, setProduct] = useState({ name: "", category: "", color: "", tag: "", image: null, description: "" });
+  const [variants, setVariants] = useState([]);
+  const [product, setProduct] = useState({
+    id: null,
+    name: "",
+    category: "",
+    color: "",
+    tag: "",
+    image: null,
+    description: "",
+    originalName: "",
+    originalCategory: "",
+    originalColor: "",
+    originalTag: "",
+    originalDescription: "",
+    originalImage: null,
+  });
   const [errors, setErrors] = useState({});
   const [totalStock, setTotalStock] = useState(0);
+  const [loading, setLoading] = useState(true);
 
+  // ---------------- Fetch product ----------------
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await getProductById(productId);
+        if (response.success && response.data) {
+          const p = response.data;
+          setProduct({
+            id: p.id,
+            name: p.product_name,
+            category: p.hair_type,
+            color: p.color,
+            tag: p.tag,
+            image: p.image_url,
+            description: p.description,
+            originalName: p.product_name,
+            originalCategory: p.hair_type,
+            originalColor: p.color,
+            originalTag: p.tag,
+            originalDescription: p.description,
+            originalImage: p.image_url,
+          });
+
+          setVariants(
+            p.variants.map((v) => ({
+              variantId: v.id,
+              size: v.length,
+              price: v.price,
+              oldPrice: v.old_price,
+              stock: v.stock,
+              sold: v.sold,
+              originalVariant: {
+                size: v.length,
+                price: v.price,
+                oldPrice: v.old_price,
+                stock: v.stock,
+              },
+            }))
+          );
+        } else {
+          SweetAlert.alert("Error", "Failed to fetch product data.", "error");
+        }
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        SweetAlert.alert("Error", "An error occurred while fetching the product.", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [productId]);
+
+  // ---------------- Total stock ----------------
   useEffect(() => {
     setTotalStock(variants.reduce((sum, v) => sum + (parseInt(v.stock) || 0), 0));
   }, [variants]);
 
+  // ---------------- Handlers ----------------
   const handleVariantChange = (i, field, value) =>
     setVariants((prev) => prev.map((v, idx) => (idx === i ? { ...v, [field]: value } : v)));
-
-  const addVariant = () => setVariants((prev) => [...prev, { size: "", stock: "", price: "", oldPrice: "" }]);
+  const addVariant = () =>
+    setVariants((prev) => [...prev, { size: "", stock: "", price: "", oldPrice: "", originalVariant: {} }]);
   const removeVariant = (i) => setVariants((prev) => prev.filter((_, idx) => idx !== i));
   const handleInputChange = (field, value) => setProduct((prev) => ({ ...prev, [field]: value }));
 
+  // ---------------- Validation ----------------
   const validate = () => {
     const newErrors = {};
     if (!product.name.trim()) newErrors.name = "Product Name is required";
@@ -215,57 +290,94 @@ export default function AddProduct() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+  // ---------------- Submit ----------------
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const formData = new FormData();
+  if (!validate()) return;
 
-      const productData = {
-        product_name: product.name.trim(),
-        hair_type: product.category,
-        color: product.color.trim(),
-        tag: product.tag,
-        description: product.description.trim(),
-      };
+  // ---------------- Prepare changed product fields ----------------
+  const updatedProductData = {};
+  if (product.name.trim() !== product.originalName) updatedProductData.product_name = product.name.trim();
+  if (product.category !== product.originalCategory) updatedProductData.hair_type = product.category;
+  if (product.color.trim() !== product.originalColor) updatedProductData.color = product.color.trim();
+  if (product.tag !== product.originalTag) updatedProductData.tag = product.tag;
+  if (product.description.trim() !== product.originalDescription)
+    updatedProductData.description = product.description.trim();
+  if (product.image !== product.originalImage) updatedProductData.image = product.imageFile || product.image;
 
-      const variantsData = variants.map((v) => ({
-        length: v.size.trim(),
-        price: parseFloat(v.price),
-        old_price: v.oldPrice ? parseFloat(v.oldPrice) : null,
-        stock: parseInt(v.stock, 10),
-        sold: 0,
+  // ---------------- Prepare changed variants ----------------
+  const updatedVariants = (variants || [])
+    .map((v) => {
+      const original = v.originalVariant || {};
+      const changed = {};
+      if (v.size.trim() !== original.size) changed.size = v.size.trim();
+      if (parseFloat(v.price) !== parseFloat(original.price)) changed.price = parseFloat(v.price);
+      if ((v.oldPrice || 0) !== (original.oldPrice || 0)) changed.old_price = v.oldPrice || 0;
+      if (parseInt(v.stock, 10) !== parseInt(original.stock || 0, 10)) changed.stock = parseInt(v.stock, 10);
+      return Object.keys(changed).length > 0 ? { variantId: v.variantId, ...changed } : null;
+    })
+    .filter(Boolean);
+
+  if (Object.keys(updatedProductData).length === 0 && updatedVariants.length === 0) {
+    SweetAlert.alert("Info", "No changes detected.", "info");
+    return;
+  }
+
+  // ---------------- Build FormData ----------------
+  const formData = new FormData();
+  formData.append("product", JSON.stringify(updatedProductData));
+  formData.append("variants", JSON.stringify(updatedVariants));
+  if (product.imageFile) formData.append("image", product.imageFile);
+
+  try {
+    const response = await updateHairProduct(product.id, formData);
+
+    if (response.success) {
+      SweetAlert.alert("Success", response.message, "success");
+      // Optionally update original values so next edit works correctly
+      setProduct((prev) => ({
+        ...prev,
+        originalName: prev.name,
+        originalCategory: prev.category,
+        originalColor: prev.color,
+        originalTag: prev.tag,
+        originalDescription: prev.description,
+        originalImage: product.imageFile || prev.originalImage,
       }));
-
-      formData.append("product", JSON.stringify(productData));
-      formData.append("variants", JSON.stringify(variantsData));
-      if (product.image) formData.append("image", product.image);
-
-      console.log("Submitting product:", { productData, variantsData, image: product.image });
-
-      const response = await addHairProduct(formData);
-
-      if (response.success) {
-        SweetAlert.alert("Success", response.message, "success");
-        setProduct({ name: "", category: "", color: "", tag: "", image: null, description: "" });
-        setVariants([{ size: "", stock: "", price: "", oldPrice: "" }]);
-        setErrors({});
-      } else {
-        SweetAlert.alert("Error", response.message, "error");
-      }
-    } catch (err) {
-      console.error("Error submitting product:", err);
-      SweetAlert.alert("Error", err.message || "Something went wrong.", "error");
+      setVariants((prev) =>
+        prev.map((v) => ({
+          ...v,
+          originalVariant: {
+            size: v.size,
+            price: v.price,
+            oldPrice: v.oldPrice,
+            stock: v.stock,
+          },
+        }))
+      );
+    } else {
+      SweetAlert.alert("Error", response.message || "Failed to update product", "error");
     }
-  };
+  } catch (err) {
+    console.error("Update product error:", err);
+    SweetAlert.alert("Error", "An unexpected error occurred while updating product.", "error");
+  }
+};
+
+
+  if (loading) return <p className="text-center py-10">Loading product...</p>;
 
   return (
     <div className="py-4 min-h-screen bg-gray-50">
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-4 space-y-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Add New Product</h2>
-        <ImageUploader onFileSelect={(file) => handleInputChange("image", file)} />
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Edit Product</h2>
+
+        {/* Image */}
+        <ImageUploader image={product.image} onFileSelect={(file) => handleInputChange("image", file)} />
         {errors.image && <p className="text-red-600 text-sm mt-1">{errors.image}</p>}
+
+        {/* Product fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
             <label className="block font-medium mb-1">Product Name</label>
@@ -312,6 +424,8 @@ export default function AddProduct() {
             />
           </div>
         </div>
+
+        {/* Variants */}
         <VariantsTable
           variants={variants}
           errors={errors}
@@ -319,12 +433,14 @@ export default function AddProduct() {
           addVariant={addVariant}
           removeVariant={removeVariant}
         />
+
         <div>
           <span className="font-semibold text-gray-700">
             Total Stock:{" "}
             <span className={`${totalStock <= 5 ? "text-red-600" : "text-green-600"}`}>{totalStock}</span>
           </span>
         </div>
+
         <div>
           <label className="block font-medium mb-1">Description</label>
           <textarea
@@ -340,7 +456,7 @@ export default function AddProduct() {
           type="submit"
           className="w-full md:w-auto bg-primary-500 text-white px-6 py-2 rounded-xl hover:bg-yellow-500 transition font-medium"
         >
-          Save Product
+          Update Product
         </button>
       </form>
     </div>

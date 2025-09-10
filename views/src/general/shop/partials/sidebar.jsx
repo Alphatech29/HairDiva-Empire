@@ -1,9 +1,18 @@
 import React from "react";
-import { FaTachometerAlt, FaBox, FaUsers, FaCog, FaTimes } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { 
+  FaTachometerAlt, 
+  FaBox, 
+  FaUsers, 
+  FaCog, 
+  FaTimes, 
+  FaSignOutAlt 
+} from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../utilitys/authContext";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation();
+  const { logout } = useAuth();
 
   const links = [
     { name: "Dashboard", path: "/store", icon: <FaTachometerAlt /> },
@@ -11,6 +20,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Customers", path: "/store/customers", icon: <FaUsers /> },
     { name: "Settings", path: "/store/settings", icon: <FaCog /> },
   ];
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <>
@@ -31,11 +44,11 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       >
         {/* Logo / Close button */}
         <div className="flex items-center justify-between p-4 border-b border-primary-600">
-           <img
-              src="/image/favicon.png"
-              alt="HairDiva Empire"
-              className="md:w-32 sm:w-28 h-14 object-cover"
-            />
+          <img
+            src="/image/favicon.png"
+            alt="HairDiva Empire"
+            className="md:w-32 sm:w-28 h-14 object-cover"
+          />
           <button
             className="lg:hidden text-white"
             onClick={() => setIsOpen(false)}
@@ -45,22 +58,33 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         </div>
 
         {/* Nav links */}
-        <nav className="p-4 space-y-2">
-          {links.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              onClick={() => setIsOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-                location.pathname === link.path
-                  ? "bg-white text-primary-700"
-                  : "hover:bg-primary-800"
-              }`}
-            >
-              {link.icon}
-              <span>{link.name}</span>
-            </Link>
-          ))}
+        <nav className="p-4 flex flex-col h-[calc(100%-80px)]">
+          <div className="flex-grow space-y-2">
+            {links.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                  location.pathname === link.path
+                    ? "bg-white text-primary-700"
+                    : "hover:bg-primary-800"
+                }`}
+              >
+                {link.icon}
+                <span>{link.name}</span>
+              </Link>
+            ))}
+          </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 hover:bg-red-600 bg-red-500 text-white"
+          >
+            <FaSignOutAlt />
+            <span>Logout</span>
+          </button>
         </nav>
       </aside>
     </>

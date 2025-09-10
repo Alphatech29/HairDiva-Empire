@@ -49,11 +49,16 @@ export default function Header() {
               scrolled ? "text-primary-800" : "text-white"
             }`}
           >
-            <img
-              src={scrolled ? "/image/logo-scrolled.png" : "/image/favicon.png"}
-              alt="HairDiva Empire"
-              className="md:w-40 sm:w-32 h-16 object-cover"
-            />
+            {/* Logo */}
+            <NavLink to="/" className="flex items-center">
+              <img
+                src={
+                  scrolled ? "/image/logo-scrolled.png" : "/image/favicon.png"
+                }
+                alt="HairDiva Empire"
+                className="md:w-40 sm:w-32 h-16 object-cover"
+              />
+            </NavLink>
           </div>
 
           {/* Desktop Navigation */}
