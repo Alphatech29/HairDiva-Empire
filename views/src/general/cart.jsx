@@ -3,7 +3,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../utilitys/cartContext";
 import { NavLink, useNavigate } from "react-router-dom";
-import Recommendations from "../components/Recommendations"; // fixed typo
+import Recommendations from "../components/Recommendations";
 
 const Cart = () => {
   const {
@@ -177,7 +177,9 @@ const Cart = () => {
                       <FiTrash2 size={26} />
                     </motion.button>
                     <span className="text-xl font-bold text-gray-900">
-                      {(Number(item.price) || 0) * (Number(item.quantity) || 1)}
+                      {formatPrice(
+                        (Number(item.price) || 0) * (Number(item.quantity) || 1)
+                      )}
                     </span>
                   </div>
                 </motion.div>

@@ -35,13 +35,16 @@ const formatPrice = (price) => {
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { cartItems, addToCart, removeFromCart } = useCart();
 
   // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       const response = await getAllProducts();
       if (response.success) setProducts(response.data);
+      setLoading(false);
     };
     fetchProducts();
   }, []);
@@ -110,55 +113,73 @@ const Shop = () => {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 sm:gap-2">
-          {filteredProducts.map((product, idx) => {
-            const isAdded = cartItems.find((item) => item.id === product.id);
+          {loading
+            ? // Show skeletons while loading
+              Array.from({ length: 8 }).map((_, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  custom={idx}
+                >
+                  <ProductCard loading={true} />
+                </motion.div>
+              ))
+            : filteredProducts.map((product, idx) => {
+                const isAdded = cartItems.find(
+                  (item) => item.id === product.id
+                );
 
-            // find lowest price from variants
-            let fallbackPrice = 0;
-            let fallbackOldPrice = null;
+                // find lowest price from variants
+                let fallbackPrice = 0;
+                let fallbackOldPrice = null;
 
-            if (product.variants?.length > 0) {
-              const sorted = [...product.variants].sort(
-                (a, b) => parseFloat(a.price) - parseFloat(b.price)
-              );
-              fallbackPrice = formatPrice(sorted[0].price);
-              fallbackOldPrice = sorted[0].old_price
-                ? formatPrice(sorted[0].old_price)
-                : null;
-            }
+                if (product.variants?.length > 0) {
+                  const sorted = [...product.variants].sort(
+                    (a, b) => parseFloat(a.price) - parseFloat(b.price)
+                  );
+                  fallbackPrice = formatPrice(sorted[0].price);
+                  fallbackOldPrice = sorted[0].old_price
+                    ? formatPrice(sorted[0].old_price)
+                    : null;
+                }
 
-            const fallbackImage =
-              product.image_url || "/image/placeholder.jpg";
+                const fallbackImage =
+                  product.image_url || "/image/placeholder.jpg";
 
-            const productSlug = slugify(product.product_name);
-            const productUrl = `/shop/product/${productSlug}-${product.id}`;
+                const productSlug = slugify(product.product_name);
+                const productUrl = `/shop/product/${productSlug}-${product.id}`;
 
-            return (
-              <motion.div
-                key={product.id}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                custom={idx}
-              >
-                <Link to={productUrl}>
-                  <ProductCard
-                    product={{
-                      ...product,
-                      image: fallbackImage,
-                      price: fallbackPrice,
-                      oldPrice: fallbackOldPrice,
-                      sold: product.total_sold || 0,
-                      rating: 4,
-                    }}
-                    isInCart={(id) => !!cartItems.find((item) => item.id === id)}
-                    handleCartClick={handleCartToggle}
-                  />
-                </Link>
-              </motion.div>
-            );
-          })}
+                return (
+                  <motion.div
+                    key={product.id}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    custom={idx}
+                  >
+                    <Link to={productUrl}>
+                      <ProductCard
+                        product={{
+                          ...product,
+                          image: fallbackImage,
+                          price: fallbackPrice,
+                          oldPrice: fallbackOldPrice,
+                          sold: product.total_sold || 0,
+                          rating: 4,
+                        }}
+                        isInCart={(id) =>
+                          !!cartItems.find((item) => item.id === id)
+                        }
+                        handleCartClick={handleCartToggle}
+                      />
+                    </Link>
+                  </motion.div>
+                );
+              })}
         </div>
       </div>
     </section>

@@ -68,41 +68,43 @@ VALUES (
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_number VARCHAR(50) UNIQUE NOT NULL,       -- tracking number
+
+    -- Customer Info
     customer_name VARCHAR(100) NOT NULL,
     customer_email VARCHAR(100),
     customer_phone VARCHAR(20),
 
-    products JSON NOT NULL,
-    -- Example:
-    -- [
-    --   {
-    --     "product_id": 1,
-    --     "color": "Black",
-    --     "length": "12",
-    --     "quantity": 2,
-    --     "unit_price": 5000
-    --   },
-    --   {
-    --     "product_id": 2,
-    --     "color": "Blonde",
-    --     "length": "16",
-    --     "quantity": 1,
-    --     "unit_price": 5300
-    --   }
-    -- ]
-
+    -- Shipping Info
     shipping_address TEXT NOT NULL,
     shipping_city VARCHAR(100) NOT NULL,
-    shipping_state VARCHAR(100),
+    shipping_state VARCHAR(100) NOT NULL,
 
-    subtotal DECIMAL(10,2) NOT NULL,                -- sum of item (qty × unit_price)
-    discount DECIMAL(10,2) DEFAULT 0.00,            -- discount amount
-    vat_amount DECIMAL(10,2) NOT NULL,              -- tax
-    total DECIMAL(10,2) NOT NULL,                   -- grand total
+    -- Order Summary
+    subtotal DECIMAL(12,2) NOT NULL,
+    discount DECIMAL(12,2) DEFAULT 0.00,
+    vat_amount DECIMAL(12,2) NOT NULL,
+    shipping_cost DECIMAL(12,2) NOT NULL,
+    total DECIMAL(12,2) NOT NULL,   -- grand total
 
     status ENUM('pending','paid','shipped','completed','cancelled') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_number VARCHAR(50) NOT NULL,             -- FK to orders.order_number
+    product_id INT NOT NULL,
+    barcode VARCHAR(100),                          -- Added barcode column here
+    color VARCHAR(50),
+    length VARCHAR(50),
+    quantity INT NOT NULL,
+    unit_price DECIMAL(12,2) NOT NULL,
+    total DECIMAL(12,2) NOT NULL,
+    FOREIGN KEY (order_number) REFERENCES orders(order_number) ON DELETE CASCADE
+);
+
+
 
 
 CREATE TABLE admin (
@@ -112,6 +114,41 @@ CREATE TABLE admin (
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE websettings (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    site_name VARCHAR(255) NOT NULL,
+    site_url VARCHAR(255) NOT NULL,
+    logo_url VARCHAR(255) DEFAULT NULL,
+    contact_email VARCHAR(255) DEFAULT NULL,
+    contact_phone VARCHAR(50) DEFAULT NULL,
+    public_key_FLW VARCHAR(255) DEFAULT NULL,
+    secret_key_FLW VARCHAR(255) DEFAULT NULL,
+    encryption_key_FLW VARCHAR(255) DEFAULT NULL,
+    FLW_base_url VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transactions (
+    id BIGINT PRIMARY KEY,                -- Flutterwave transaction ID
+    order_number VARCHAR(100) NOT NULL,   -- renamed from tx_ref
+    flw_ref VARCHAR(255) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    currency VARCHAR(10) NOT NULL,
+    charged_amount DECIMAL(15,2),
+    app_fee DECIMAL(15,2),
+    merchant_fee DECIMAL(15,2),
+    processor_response VARCHAR(100),
+    auth_model VARCHAR(50),
+    account_id BIGINT,
+    ip VARCHAR(45),
+    narration VARCHAR(255),
+    payment_type VARCHAR(50),
+    status VARCHAR(50),
+    created_at DATETIME
+
 );
 
 

@@ -1,6 +1,36 @@
 import { FaStar, FaRegStar, FaHeart, FaShoppingCart } from "react-icons/fa";
 
-export default function ProductCard({ product, isInCart, handleCartClick }) {
+export default function ProductCard({ product, isInCart, handleCartClick, loading = false }) {
+  if (loading) {
+    // Skeleton UI
+    return (
+      <div className="bg-white md:rounded-3xl sm:rounded-md shadow-lg overflow-hidden animate-pulse">
+        {/* Image Skeleton */}
+        <div className="w-full md:h-64 sm:h-36 bg-gray-200" />
+
+        <div className="py-4 px-3">
+          {/* Product Name */}
+          <div className="h-4 bg-gray-200 rounded w-3/4 mb-3" />
+
+          {/* Ratings */}
+          <div className="flex gap-1 mb-2">
+            {Array(5).fill(0).map((_, i) => (
+              <div key={i} className="w-4 h-4 bg-gray-200 rounded" />
+            ))}
+            <div className="h-4 w-8 bg-gray-200 rounded ml-2" />
+          </div>
+
+          {/* Price */}
+          <div className="h-4 bg-gray-200 rounded w-1/3 mb-4" />
+
+          {/* Button */}
+          <div className="h-9 bg-gray-200 rounded w-20" />
+        </div>
+      </div>
+    );
+  }
+
+  // Normal Product Card
   return (
     <div className="bg-white md:rounded-3xl sm:rounded-md shadow-lg overflow-hidden transform transition-all hover:-translate-y-2 hover:shadow-2xl group">
       <div className="relative">
@@ -40,12 +70,10 @@ export default function ProductCard({ product, isInCart, handleCartClick }) {
       </div>
 
       <div className="py-4 px-3">
-        {/* Product Name always visible */}
         <h3 className="text-base text-start sm:text-sm font-semibold text-primary-900 mb-2 md:line-clamp-2 sm:line-clamp-1">
           {product.product_name}
         </h3>
 
-        {/* Ratings + Sold */}
         <div className="flex sm:text-sm items-center mb-1">
           {[...Array(5)].map((_, i) =>
             i < Math.floor(product.rating) ? (
@@ -61,10 +89,12 @@ export default function ProductCard({ product, isInCart, handleCartClick }) {
 
         {/* Mobile Price */}
         <div className="sm:block md:hidden mb-2">
-          <span className="text-sm sm:text-xs font-bold text-primary-900">{product.price}-</span>
+          <span className="text-sm sm:text-xs font-bold text-primary-900">
+            ₦{product.price}
+          </span>
           {product.oldPrice && (
             <span className="text-sm line-through text-primary-400 ml-2">
-              {product.oldPrice}
+              ₦{product.oldPrice}
             </span>
           )}
         </div>

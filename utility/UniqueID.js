@@ -15,4 +15,15 @@ function generateUniqueBarcode(length = 13) {
   return barcode;
 }
 
-module.exports = generateUniqueBarcode;
+function generateOrderNumber(length = 8) {
+  if (length < 1) throw new Error("Length must be at least 1");
+
+  let orderNumber = "";
+  for (let i = 0; i < length; i++) {
+    orderNumber += crypto.randomInt(0, 10).toString();
+  }
+
+  return orderNumber;
+}
+
+module.exports = {generateUniqueBarcode, generateOrderNumber};

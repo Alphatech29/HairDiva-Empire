@@ -55,7 +55,7 @@ const SingleProduct = () => {
   // ✅ API gives flat variants + single color
   const variants = product.variants || [];
   const selectedVariant = variants[selectedVariantIndex] || {};
-  const productColor = product.color || null;
+  const productColor = product.color;
 
   const increaseQuantity = () => setQuantity((q) => q + 1);
   const decreaseQuantity = () => setQuantity((q) => Math.max(1, q - 1));
@@ -69,6 +69,7 @@ const SingleProduct = () => {
       variant: selectedVariant,
       price: selectedVariant.price || product.price || 0,
       quantity,
+      barcode: product.barcode, // add this line
     });
 
     setShowToast(true);
@@ -95,7 +96,9 @@ const SingleProduct = () => {
         {/* Product Info */}
         <div className="h-auto flex flex-col justify-between">
           <div>
-            <h1 className="md:text-3xl sm:text-lg font-bold mb-3">{product.product_name}</h1>
+            <h1 className="md:text-3xl sm:text-lg font-bold mb-3">
+              {product.product_name}
+            </h1>
 
             {/* Price */}
             <p className="text-2xl font-bold text-primary mt-6">
@@ -106,7 +109,6 @@ const SingleProduct = () => {
                 </span>
               )}
             </p>
-
 
             {/* Variant Selector */}
             <div className="flex items-center gap-2 mt-5">

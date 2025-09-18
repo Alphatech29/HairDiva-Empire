@@ -6,7 +6,6 @@ import ProductCard from "../components/productCard";
 import { getAllProducts } from "../utilitys/products";
 import { slugify } from "../utilitys/slugs";
 
-
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   show: (i = 1) => ({
@@ -25,10 +24,12 @@ const formatPrice = (price) => {
 export default function Nightwear() {
   const { cartItems, addToCart, removeFromCart } = useCart();
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch Night Wear products
+  // Fetch Nightwear products
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       const response = await getAllProducts();
       if (response.success) {
         // filter only nightwear products and limit to 4
@@ -38,6 +39,7 @@ export default function Nightwear() {
 
         setProducts(nightwear);
       }
+      setLoading(false);
     };
     fetchProducts();
   }, []);
@@ -55,7 +57,7 @@ export default function Nightwear() {
   };
 
   return (
-    <section className="py-8 bg-primary-100">
+    <section className="py-16 bg-primary-100">
       <div className="md:max-w-7xl md:mx-auto px-6 sm:px-2">
         {/* Animated Heading */}
         <motion.h2
@@ -70,54 +72,70 @@ export default function Nightwear() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 sm:gap-2">
-          {products.map((product, idx) => {
-            // fallback to first variant price
-            let fallbackPrice = 0;
-            let fallbackOldPrice = null;
+          {loading
+            ? // Show skeletons while loading
+              Array.from({ length: 4 }).map((_, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  custom={idx}
+                >
+                  <ProductCard loading={true} />
+                </motion.div>
+              ))
+            : products.map((product, idx) => {
+                // fallback to first variant price
+                let fallbackPrice = 0;
+                let fallbackOldPrice = null;
 
-            if (product.variants?.length > 0) {
-              const sorted = [...product.variants].sort(
-                (a, b) => parseFloat(a.price) - parseFloat(b.price)
-              );
-              fallbackPrice = formatPrice(sorted[0].price);
-              fallbackOldPrice = sorted[0].old_price
-                ? formatPrice(sorted[0].old_price)
-                : null;
-            }
+                if (product.variants?.length > 0) {
+                  const sorted = [...product.variants].sort(
+                    (a, b) => parseFloat(a.price) - parseFloat(b.price)
+                  );
+                  fallbackPrice = formatPrice(sorted[0].price);
+                  fallbackOldPrice = sorted[0].old_price
+                    ? formatPrice(sorted[0].old_price)
+                    : null;
+                }
 
-            const fallbackImage =
-              product.image_url || "/image/placeholder.jpg";
+                const fallbackImage =
+                  product.image_url || "/image/placeholder.jpg";
 
-            const productSlug = slugify(product.product_name);
-            const productUrl = `/shop/product/${productSlug}-${product.id}`;
+                const productSlug = slugify(product.product_name);
+                const productUrl = `/shop/product/${productSlug}-${product.id}`;
 
-            return (
-              <motion.div
-                key={product.id}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                custom={idx}
-              >
-                <Link to={productUrl}>
-                  <ProductCard
-                    product={{
-                      ...product,
-                      name: product.product_name,
-                      image: fallbackImage,
-                      price: `${fallbackPrice}`,
-                      oldPrice: fallbackOldPrice ? `${fallbackOldPrice}` : null,
-                      sold: product.total_sold || 0,
-                      rating: 4,
-                    }}
-                    isInCart={isInCart}
-                    handleCartClick={handleCartClick}
-                  />
-                </Link>
-              </motion.div>
-            );
-          })}
+                return (
+                  <motion.div
+                    key={product.id}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    custom={idx}
+                  >
+                    <Link to={productUrl}>
+                      <ProductCard
+                        product={{
+                          ...product,
+                          name: product.product_name,
+                          image: fallbackImage,
+                          price: `${fallbackPrice}`,
+                          oldPrice: fallbackOldPrice
+                            ? `${fallbackOldPrice}`
+                            : null,
+                          sold: product.total_sold || 0,
+                          rating: 4,
+                        }}
+                        isInCart={isInCart}
+                        handleCartClick={handleCartClick}
+                      />
+                    </Link>
+                  </motion.div>
+                );
+              })}
         </div>
 
         {/* See More Button */}
@@ -130,7 +148,7 @@ export default function Nightwear() {
           className="flex items-center justify-center mt-8"
         >
           <NavLink
-            to="/shop/night-wear"
+            to="/shop"
             className="text-center px-6 py-2 text-primary-100 bg-gradient-to-r from-purple-800 to-yellow-500 rounded-md"
           >
             See More

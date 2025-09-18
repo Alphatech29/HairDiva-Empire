@@ -6,7 +6,7 @@ const {
   deleteHairProductById,
   updateHairProductWithVariant
 } = require("../../utility/product");
-const generateUniqueBarcode = require("../../utility/generateUniqueBarcode")
+const {generateUniqueBarcode} = require("../../utility/UniqueID")
 
 
 const getProductsController = asyncHandler(async (req, res) => {

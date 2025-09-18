@@ -39,6 +39,7 @@ export const CartProvider = ({ children }) => {
     ...product,
     price: Number(product.price) || 0,
     quantity: Number(product.quantity) || 1,
+    barcode: product.barcode || null,
   });
 
   // Add to cart
@@ -64,7 +65,7 @@ export const CartProvider = ({ children }) => {
 
   // Update quantity
   const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return; 
+    if (newQuantity < 1) return;
     setCartItems((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item
@@ -75,6 +76,16 @@ export const CartProvider = ({ children }) => {
   // Remove multiple items
   const removeMultipleFromCart = (ids) => {
     setCartItems((prev) => prev.filter((item) => !ids.includes(item.id)));
+  };
+
+  // Clear the entire cart
+  const clearCart = () => {
+    setCartItems([]);
+    setCoupon("");
+    setDiscount(0);
+    localStorage.removeItem("cartItems");
+    localStorage.removeItem("coupon");
+    localStorage.removeItem("discount");
   };
 
   // Subtotal
@@ -110,6 +121,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         removeMultipleFromCart,
+        clearCart, 
         subtotal,
         discount,
         coupon,
