@@ -2,7 +2,7 @@ const pool = require("../model/db");
 
 const createOrder = async (orderData) => {
   const {
-    orderNumber, // <-- add this line
+    orderNumber,
     customer: { fullName, email, phone },
     shipping: { address, city, state },
     order: { summary },
@@ -41,8 +41,6 @@ const createOrder = async (orderData) => {
         summary.grandTotal,
       ]
     );
-
-    // Return the order number and inserted ID
     return {
       success: true,
       message: "Order created successfully",
@@ -61,21 +59,24 @@ const createOrderItems = async (orderNumber, items) => {
   }
 
   try {
+    // Map items into values array for bulk insert
     const values = items.map((item) => [
       orderNumber,
-      item.id,               // product_id
-      item.barcode || null,  // barcode
+      item.variant?.id || null,
+      item.id || null,
+      item.barcode || null,
       item.color || null,
-      item.variant?.length || null, // length
-      item.quantity,
-      item.price,
-      item.price * item.quantity,   // total
+      item.variant?.length || null,
+      item.quantity || 0,
+      item.variant?.price || item.price || 0,
+      (item.quantity || 0) * (item.variant?.price || item.price || 0),
     ]);
 
     const [result] = await pool.query(
       `
       INSERT INTO order_items (
         order_number,
+        variant_id,
         product_id,
         barcode,
         color,
