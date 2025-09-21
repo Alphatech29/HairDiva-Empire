@@ -12,6 +12,7 @@ import Shoproute from "./route/shopRoute";
 import ShopPrivateRoute from "./utilitys/shopPrivateRoute";
 import { AuthProvider } from "./utilitys/authContext";
 import OrderConfirmed from "./general/orderConfirmed";
+import TrackOrder from "./general/trackOrder";
 
 
 function Layout({ children }) {
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="/shop/cart" element={<Cart />} />
               <Route path="/shop/check-out" element={<Checkout />} />
               <Route path="/shop/confirmation" element={<OrderConfirmed />} />
+              <Route path="/order/track-order" element={<TrackOrder />} />
               <Route path="/shop/product/:slugId" element={<SingleProduct />} />
 
               {/* Protected Admin Routes */}

@@ -1,6 +1,6 @@
 const { generateOrderNumber } = require("../../utility/UniqueID");
 const { createPaymentLink } = require("../../utility/flutterwave");
-const { createOrder, createOrderItems } = require("../../utility/order");
+const { createOrder, createOrderItems, getAllOrders, getOrderByNumber } = require("../../utility/order");
 const { getWebsiteSettings } = require("../../utility/general");
 
 const createOrderController = async (req, res) => {
@@ -96,4 +96,46 @@ const createOrderController = async (req, res) => {
   }
 };
 
-module.exports = { createOrderController };
+
+// Controller to fetch all orders
+const getAllOrdersController = async (req, res) => {
+  try {
+    const result = await getAllOrders();
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(500).json(result);
+    }
+  } catch (err) {
+    console.error("Error in getAllOrdersController:", err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching orders",
+    });
+  }
+};
+
+// Controller to fetch a single order by order number
+const getOrderByNumberController = async (req, res) => {
+  try {
+    const { orderNumber } = req.params; // from route params: /orders/:orderNumber
+
+    const result = await getOrderByNumber(orderNumber);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(404).json(result); // use 404 when order not found
+    }
+  } catch (err) {
+    console.error("Error in getOrderByNumberController:", err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching order",
+    });
+  }
+};
+
+
+module.exports = { createOrderController, getAllOrdersController, getOrderByNumberController };

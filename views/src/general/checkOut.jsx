@@ -3,7 +3,7 @@ import { useCart } from "../utilitys/cartContext";
 import { NIGERIAN_STATES, NIGERIAN_CITIES } from "../utilitys/state";
 import { NavLink } from "react-router-dom";
 import Dropdown from "../components/dropDown";
-import { createOrder } from "../utilitys/oreder";
+import { createOrder } from "../utilitys/order";
 import SweetAlert from "../utilitys/sweetAlert";
 
 const Checkout = () => {
