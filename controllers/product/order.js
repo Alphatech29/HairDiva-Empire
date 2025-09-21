@@ -1,6 +1,6 @@
 const { generateOrderNumber } = require("../../utility/UniqueID");
 const { createPaymentLink } = require("../../utility/flutterwave");
-const { createOrder, createOrderItems, getAllOrders, getOrderByNumber } = require("../../utility/order");
+const { createOrder, createOrderItems, getAllOrders, getOrderByNumber, updateOrderStatus } = require("../../utility/order");
 const { getWebsiteSettings } = require("../../utility/general");
 
 const createOrderController = async (req, res) => {
@@ -138,4 +138,35 @@ const getOrderByNumberController = async (req, res) => {
 };
 
 
-module.exports = { createOrderController, getAllOrdersController, getOrderByNumberController };
+
+// Controller to update order status by order number
+const updateOrderStatusController = async (req, res) => {
+  const { orderNumber } = req.params;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({
+      success: false,
+      message: "Status is required",
+    });
+  }
+
+  try {
+    const result = await updateOrderStatus(orderNumber, status);
+
+    if (!result.success) {
+      return res.status(404).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error("Controller error:", err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+
+module.exports = { createOrderController, getAllOrdersController, getOrderByNumberController, updateOrderStatusController };

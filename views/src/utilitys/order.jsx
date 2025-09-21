@@ -69,3 +69,30 @@ export const getOrderByNumber = async (orderNumber) => {
     };
   }
 };
+
+// Update order status
+export const updateOrderStatus = async (orderNumber, status) => {
+  try {
+    const response = await axios.put(`/api/orders/${orderNumber}/status`, 
+      { status }, // request body
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Updating order status failed:", 
+      error.response?.data || error.message
+    );
+
+    return {
+      success: false,
+      message: error.response?.data?.message || "Server error",
+      error: error.response?.data || error.message,
+    };
+  }
+};

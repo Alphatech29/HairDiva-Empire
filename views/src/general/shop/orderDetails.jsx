@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { FiArrowLeft, FiUser, FiTruck, FiPackage, FiFileText } from "react-icons/fi";
-import { getOrderByNumber } from "../../utilitys/order";
+import { getOrderByNumber, updateOrderStatus } from "../../utilitys/order";
 import { formatDateTime } from "../../utilitys/formatDate";
 import { formatAmount } from "../../utilitys/formatAmount";
+import SweetAlert from "../../utilitys/sweetAlert"
 
 const statusColors = {
+  pending: "bg-yellow-100/80 text-yellow-700 border border-yellow-200 shadow-sm",
   paid: "bg-green-100/80 text-green-700 border border-green-200 shadow-sm",
   shipped: "bg-blue-100/80 text-blue-700 border border-blue-200 shadow-sm",
   completed: "bg-purple-100/80 text-purple-700 border border-purple-200 shadow-sm",
-  pending: "bg-yellow-100/80 text-yellow-700 border border-yellow-200 shadow-sm",
   cancelled: "bg-red-100/80 text-red-700 border border-red-200 shadow-sm",
   default: "bg-gray-100/80 text-gray-600 border border-gray-200 shadow-sm",
 };
@@ -17,33 +18,68 @@ const statusColors = {
 const toTitleCase = (str) =>
   str ? str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase()) : "";
 
+const nextStatus = {
+  pending: "paid",
+  paid: "shipped",
+  shipped: "completed",
+  completed: "completed",
+};
+
 const OrderDetails = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
       const result = await getOrderByNumber(id);
-
       if (result.success) {
         setOrder(result.order || result.data);
       } else {
         setError(result.message || "Failed to load order details");
       }
-
       setLoading(false);
     };
-
     fetchOrder();
   }, [id]);
+
+ const handleToggleStatus = async () => {
+  if (!order || order.status === "completed" || order.status === "cancelled") return;
+
+  const newStatus = nextStatus[order.status];
+  setUpdating(true);
+
+  try {
+    const result = await updateOrderStatus(order.order_number, newStatus);
+    if (result.success) {
+      setOrder((prev) => ({
+        ...prev,
+        status: newStatus,
+      }));
+      SweetAlert.alert(
+        "Status Updated",
+        `Order status successfully updated to ${toTitleCase(newStatus)}`,
+        "success"
+      );
+    } else {
+      SweetAlert.alert("Failed", result.message || "Failed to update status", "error");
+    }
+  } catch (err) {
+    console.error("Error updating order status:", err);
+    SweetAlert.alert("Error", "There was an error updating the order status", "error");
+  } finally {
+    setUpdating(false);
+  }
+};
+
 
   if (loading) return <p className="text-gray-500 animate-pulse">Loading order details...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
   if (!order) return <p className="text-gray-500">No order found</p>;
 
-  // Timeline logic: if cancelled, override all stages
+  // Timeline logic
   let timelineSteps = [];
   if (order.cancelled_at) {
     timelineSteps.push({ label: "Cancelled", date: order.cancelled_at, color: "bg-red-400" });
@@ -51,10 +87,9 @@ const OrderDetails = () => {
     timelineSteps = [
       { label: "Pending", date: order.pending_at, color: "bg-yellow-400" },
       { label: "Paid", date: order.paid_at, color: "bg-green-400" },
-      { label: "Shipped", date: order.shipped_at, color: "bg-green-700" },
-      { label: "Completed", date: order.completed_at, color: "bg-green-900" },
+      { label: "Shipped", date: order.shipped_at, color: "bg-blue-700" },
+      { label: "Completed", date: order.completed_at, color: "bg-purple-900" },
     ];
-
   }
 
   return (
@@ -69,20 +104,29 @@ const OrderDetails = () => {
       {/* Order Header */}
       <div className="mt-6 flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            Order #{order.order_number}
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Placed on {formatDateTime(order.pending_at)}
-          </p>
+          <h2 className="text-3xl font-extrabold text-gray-900">Order #{order.order_number}</h2>
+          <p className="text-sm text-gray-500 mt-1">Placed on {formatDateTime(order.pending_at)}</p>
         </div>
-        <span
-          className={`px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-md ${
-            statusColors[order.status] || statusColors.default
-          }`}
-        >
-          {toTitleCase(order.status)}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-md ${
+              statusColors[order.status] || statusColors.default
+            }`}
+          >
+            {toTitleCase(order.status)}
+          </span>
+
+          {/* Toggle Status Button */}
+          {order.status !== "completed" && order.status !== "cancelled" && (
+            <button
+              className="px-4 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+              disabled={updating}
+              onClick={handleToggleStatus}
+            >
+              {updating ? "Updating..." : `Move to ${toTitleCase(nextStatus[order.status])}`}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Customer & Shipping Info */}
@@ -133,19 +177,11 @@ const OrderDetails = () => {
                 >
                   <td className="p-3">{idx + 1}</td>
                   <td className="p-3">{item.barcode}</td>
-                  <td className="p-3">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={item.image_url}
-                        alt={item.product_name}
-                        className="w-12 h-12 object-cover rounded-lg"
-                      />
-                      <div>
-                        <p className="font-medium text-gray-800">{item.product_name}</p>
-                        <p className="text-xs text-gray-500">
-                          Color: {item.color} | Length: {item.length}
-                        </p>
-                      </div>
+                  <td className="p-3 flex items-center gap-3">
+                    <img src={item.image_url} alt={item.product_name} className="w-12 h-12 object-cover rounded-lg" />
+                    <div>
+                      <p className="font-medium text-gray-800">{item.product_name}</p>
+                      <p className="text-xs text-gray-500">Color: {item.color} | Length: {item.length}</p>
                     </div>
                   </td>
                   <td className="p-3">{item.quantity}</td>
@@ -159,8 +195,8 @@ const OrderDetails = () => {
       </div>
 
       {/* Order Summary + Timeline */}
-      <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-3 ">
-        <div className="w-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-6 max-w-md">
+      <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="w-full bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-6">
           <div className="flex items-center mb-3">
             <FiFileText className="text-indigo-600 mr-2 text-lg" />
             <h3 className="text-lg font-semibold text-gray-900">Order Summary</h3>
@@ -177,23 +213,18 @@ const OrderDetails = () => {
         </div>
 
         {/* Timeline */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm relative ">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm relative">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Timeline</h3>
           <div className="flex flex-col gap-4 relative pl-8">
             <div className="absolute left-3 top-0 bottom-0 w-1 bg-gray-200 rounded-full"></div>
-
             {timelineSteps.map((step, idx) => (
               <div key={idx} className="flex items-start gap-4 relative">
                 <div
-                  className={`w-3 h-3 rounded-full mt-1 ${
-                    step.date ? step.color : "bg-gray-300"
-                  } shadow-md`}
+                  className={`w-3 h-3 rounded-full mt-1 ${step.date ? step.color : "bg-gray-300"} shadow-md`}
                 ></div>
                 <div>
                   <p className="text-sm font-medium text-gray-800">{step.label}</p>
-                  <p className="text-xs text-gray-500">
-                    {step.date ? formatDateTime(step.date) : "Pending"}
-                  </p>
+                  <p className="text-xs text-gray-500">{step.date ? formatDateTime(step.date) : "Pending"}</p>
                 </div>
               </div>
             ))}

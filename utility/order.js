@@ -148,8 +148,6 @@ const updateOrderStatus = async (orderNumber, status) => {
 };
 
 
-
-
 // Function to get all orders
 const getAllOrders = async () => {
   try {
