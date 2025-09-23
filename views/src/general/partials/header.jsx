@@ -123,6 +123,27 @@ export default function Header() {
             >
               Salon
             </NavLink>
+
+            <NavLink
+              to="/order/track-order"
+              className={({ isActive }) =>
+                `${baseClasses} ${
+                  isActive
+                    ? `${activeClasses} ${
+                        scrolled
+                          ? "text-primary-600 border-primary-600"
+                          : "text-white border-white"
+                      }`
+                    : `${
+                        scrolled
+                          ? "text-primary-800 hover:text-primary-600"
+                          : "text-white hover:text-gray-300"
+                      }`
+                }`
+              }
+            >
+              Track Order
+            </NavLink>
             <NavLink
               to="/about-us"
               className={({ isActive }) =>
@@ -253,6 +274,21 @@ export default function Header() {
                 </NavLink>
               </li>
               <li>
+                <NavLink
+                  to="/order/track-order"
+                  onClick={() => setIsOpen(false)}
+                  className={({ isActive }) =>
+                    `${baseClasses} ${
+                      isActive
+                        ? "font-semibold border-b-2 border-current"
+                        : "hover:text-primary-500"
+                    }`
+                  }
+                >
+                  Track Order
+                </NavLink>
+              </li>
+               <li>
                 <NavLink
                   to="/about-us"
                   onClick={() => setIsOpen(false)}

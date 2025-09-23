@@ -1,95 +1,179 @@
-import React, { useEffect, useState } from "react";
-import { FaCheckCircle, FaShippingFast, FaTruck, FaHourglassHalf } from "react-icons/fa";
-import Confetti from "react-confetti";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { getOrderByNumber } from "../utilitys/order";
+import { formatDateTime } from "../utilitys/formatDate";
 
-const mockOrder = {
-  orderNumber: "123456",
-  status: "pending-confirmation",
-  steps: [
-    { key: "order-placed", label: "Order Placed", description: "Your order has been successfully placed.", date: "Fri, 19-09", icon: <FaHourglassHalf /> },
-    { key: "pending-confirmation", label: "Pending Confirmation", description: "Your order is currently being processed.", date: "Fri, 19-09", icon: <FaHourglassHalf /> },
-    { key: "shipped", label: "Shipped", description: "Your order is on the way.", date: "Sat, 20-09", icon: <FaShippingFast /> },
-    { key: "delivered", label: "Delivered", description: "Your order has been delivered successfully.", date: "Sun, 21-09", icon: <FaCheckCircle /> },
-  ],
-};
+export default function OrderTrackingPage() {
+  const [orderNumber, setOrderNumber] = useState("");
+  const [orderData, setOrderData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-const HorizontalTimeline = () => {
-  const [orderDetails] = useState(mockOrder);
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const stagesOrder = [
+    { key: "pending_at", label: "Order Placed" },
+    { key: "paid_at", label: "Processing" },
+    { key: "shipped_at", label: "Shipped" },
+    { key: "completed_at", label: "Delivered" },
+  ];
 
-  useEffect(() => {
-    const handleResize = () => setDimensions({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const fetchOrder = async () => {
+    if (!orderNumber.trim()) {
+      setError("Please enter an order number");
+      return;
+    }
 
-  const isStepCompleted = (stepKey) => {
-    const currentIndex = orderDetails.steps.findIndex((step) => step.key === orderDetails.status);
-    const stepIndex = orderDetails.steps.findIndex((step) => step.key === stepKey);
-    return stepIndex <= currentIndex;
+    setLoading(true);
+    setError(null);
+    setOrderData(null);
+
+    try {
+      const response = await getOrderByNumber(orderNumber);
+      if (response?.success && response.data) {
+        setOrderData(response.data);
+      } else {
+        setError("Order not found");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch order");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStageColor = (key) => {
+    if (!orderData) return "bg-gray-300";
+    if (orderData[key]) return "bg-green-500";
+    if ((key === "paid_at" && orderData.status === "paid") || (key === "shipped_at" && orderData.status === "shipped"))
+      return "bg-yellow-500 animate-pulse";
+    return "bg-gray-300";
+  };
+
+  const safeFormatDate = (date) => {
+    if (!date) return "Pending";
+    return formatDateTime(date);
+  };
+
+  const getOpacity = (key) => {
+    if (!orderData) return "opacity-50";
+    return orderData[key] ? "opacity-100" : "opacity-50";
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center bg-gradient-to-tr from-purple-50 via-pink-50 to-yellow-50 p-6 overflow-x-auto">
-      {/* Confetti */}
-      {orderDetails.status === "delivered" && (
-        <Confetti width={dimensions.width} height={dimensions.height} numberOfPieces={300} recycle={false} />
-      )}
+    <div className="min-h-screen flex items-center justify-center px-3 py-40 bg-gradient-to-t from-purple-100 via-yellow-50 to-purple-950 text-purple-100">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900">Track Your Order</h1>
+          {orderData && (
+            <p className="text-gray-500 mt-2">
+              Order ID: <span className="font-semibold text-gray-800">{orderData.order_number}</span>
+            </p>
+          )}
+        </div>
 
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
-          Track Order <span className="text-purple-600">#{orderDetails.orderNumber}</span>
-        </h1>
-        <p className="text-gray-500 mt-3 text-lg">Follow your order progress in real-time</p>
-      </motion.div>
+        {/* Input */}
+        <div className="flex gap-2 justify-center">
+          <input
+            type="text"
+            placeholder="Enter order number"
+            value={orderNumber}
+            onChange={(e) => setOrderNumber(e.target.value)}
+            className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+          <button
+            onClick={fetchOrder}
+            className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+          >
+            {loading ? "Loading..." : "Track"}
+          </button>
+        </div>
 
-      {/* Horizontal Timeline */}
-      <div className="relative flex items-center justify-start space-x-16 min-w-max">
-        {/* Full line behind steps */}
-        <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-300 rounded-full z-0"></div>
+        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
 
-        {/* Animated progress */}
-        <motion.div
-          className="absolute top-1/2 left-0 h-1 rounded-full z-10"
-          initial={{ width: 0 }}
-          animate={{
-            width: `${(orderDetails.steps.findIndex((step) => step.key === orderDetails.status) / (orderDetails.steps.length - 1)) * 100}%`,
-          }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400 rounded-full"></div>
-        </motion.div>
+        {/* Timeline Bottom-Up */}
+        {orderData && (
+          <div className="relative ml-6 flex flex-col-reverse space-y-6 space-y-reverse">
+            {stagesOrder.map((stage, idx) => {
+              const color = getStageColor(stage.key);
+              const nextStage = stagesOrder[idx + 1];
+              const opacityClass = getOpacity(stage.key);
 
-        {/* Step items */}
-        {orderDetails.steps.map((step, index) => {
-          const completed = isStepCompleted(step.key);
+              return (
+                <div key={stage.key} className={`relative ${opacityClass}`}>
+                  {/* Dot */}
+                  <div
+                    className={`absolute w-4 h-4 rounded-full -left-[9px] top-2 ${color}`}
+                  ></div>
 
-          return (
-            <motion.div
-              key={step.key}
-              className="relative flex flex-col items-center z-20"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
-            >
-              <div
-                className={`w-16 h-16 flex items-center justify-center rounded-full shadow-lg mb-4 text-2xl transition-transform duration-500 ${
-                  completed ? "bg-purple-600 text-white ring-4 ring-purple-200 animate-pulse" : "bg-gray-100 text-gray-400"
-                }`}
-              >
-                {React.cloneElement(step.icon, { className: "text-3xl" })}
-              </div>
-              <h3 className="font-bold text-gray-700 text-center">{step.label}</h3>
-              <span className="text-gray-400 text-sm">{step.date}</span>
-              <p className="text-gray-500 text-sm text-center mt-1">{step.description}</p>
-            </motion.div>
-          );
-        })}
+                  {/* Line to next dot */}
+                  {nextStage && orderData[stage.key] && (
+                    <div
+                      className="absolute left-1.5 top-3 w-1 bg-green-500"
+                      style={{ height: "calc(100% + 1rem)" }}
+                    ></div>
+                  )}
+
+                  {/* Stage content */}
+                  <div className="bg-gray-50 p-4 rounded-xl shadow-sm ml-6">
+                    <h3 className="text-lg font-semibold text-gray-800">{stage.label}</h3>
+                    <p
+                      className={`text-sm font-medium ${
+                        color.includes("green")
+                          ? "text-green-600"
+                          : color.includes("yellow")
+                          ? "text-yellow-600"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {safeFormatDate(orderData[stage.key])}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Order Summary with ToolTip */}
+        {orderData && (
+          <div className="bg-gray-100 rounded-xl p-6 shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
+            <ul className="space-y-2 text-gray-700">
+              {orderData.items.map((item) => (
+                <li key={item.id} className="flex justify-between items-center group relative">
+                  <span className="truncate max-w-[70%] line-clamb-1" title={item.product_name}>
+                    {item.product_name}
+                  </span>
+                  <span>{item.quantity} x ₦{item.unit_price}</span>
+                
+                  <div className="absolute left-0 -top-6 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 shadow-lg">
+                    {item.product_name}
+                  </div>
+                </li>
+              ))}
+              <li className="flex justify-between font-semibold border-t pt-2 mt-2">
+                <span>Total:</span>
+                <span>₦{orderData.total}</span>
+              </li>
+            </ul>
+          </div>
+        )}
+
+        {/* Delivery Info & Support */}
+        {orderData && (
+          <div className="mt-8 text-center">
+            <p className="text-gray-600">
+              Normally, your package will arrive within 1–5 working days after placing your order. In case of weather disasters or holidays, there may be delays.
+            </p>
+            <p className="text-gray-600">
+              For any questions, please contact{" "}
+              <a href="mailto:support@hairdivaempire.com" className="text-blue-600">
+                support@hairdivaempire.com
+              </a>.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default HorizontalTimeline;
+}

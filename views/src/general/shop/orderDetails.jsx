@@ -4,7 +4,7 @@ import { FiArrowLeft, FiUser, FiTruck, FiPackage, FiFileText } from "react-icons
 import { getOrderByNumber, updateOrderStatus } from "../../utilitys/order";
 import { formatDateTime } from "../../utilitys/formatDate";
 import { formatAmount } from "../../utilitys/formatAmount";
-import SweetAlert from "../../utilitys/sweetAlert"
+import SweetAlert from "../../utilitys/sweetAlert";
 
 const statusColors = {
   pending: "bg-yellow-100/80 text-yellow-700 border border-yellow-200 shadow-sm",
@@ -45,35 +45,66 @@ const OrderDetails = () => {
     fetchOrder();
   }, [id]);
 
- const handleToggleStatus = async () => {
-  if (!order || order.status === "completed" || order.status === "cancelled") return;
+  const handleToggleStatus = async () => {
+    if (!order || order.status === "completed" || order.status === "cancelled") return;
 
-  const newStatus = nextStatus[order.status];
-  setUpdating(true);
+    const newStatus = nextStatus[order.status];
+    setUpdating(true);
 
-  try {
-    const result = await updateOrderStatus(order.order_number, newStatus);
-    if (result.success) {
-      setOrder((prev) => ({
-        ...prev,
-        status: newStatus,
-      }));
-      SweetAlert.alert(
-        "Status Updated",
-        `Order status successfully updated to ${toTitleCase(newStatus)}`,
-        "success"
-      );
-    } else {
-      SweetAlert.alert("Failed", result.message || "Failed to update status", "error");
+    try {
+      const result = await updateOrderStatus(order.order_number, newStatus);
+      if (result.success) {
+        setOrder((prev) => ({
+          ...prev,
+          status: newStatus,
+        }));
+        SweetAlert.alert(
+          "Status Updated",
+          `Order status successfully updated to ${toTitleCase(newStatus)}`,
+          "success"
+        );
+      } else {
+        SweetAlert.alert("Failed", result.message || "Failed to update status", "error");
+      }
+    } catch (err) {
+      console.error("Error updating order status:", err);
+      SweetAlert.alert("Error", "There was an error updating the order status", "error");
+    } finally {
+      setUpdating(false);
     }
-  } catch (err) {
-    console.error("Error updating order status:", err);
-    SweetAlert.alert("Error", "There was an error updating the order status", "error");
-  } finally {
-    setUpdating(false);
-  }
-};
+  };
 
+  const handleCancelOrder = async () => {
+    if (!order || order.status === "completed" || order.status === "cancelled") return;
+
+    SweetAlert.confirm(
+      "Are you sure?",
+      "This will cancel the order and cannot be undone.",
+      "warning"
+    ).then(async (confirmed) => {
+      if (!confirmed) return;
+
+      setUpdating(true);
+      try {
+        const result = await updateOrderStatus(order.order_number, "cancelled");
+        if (result.success) {
+          setOrder((prev) => ({
+            ...prev,
+            status: "cancelled",
+            cancelled_at: new Date().toISOString(),
+          }));
+          SweetAlert.alert("Cancelled", "Order has been cancelled", "success");
+        } else {
+          SweetAlert.alert("Failed", result.message || "Failed to cancel order", "error");
+        }
+      } catch (err) {
+        console.error("Error cancelling order:", err);
+        SweetAlert.alert("Error", "There was an error cancelling the order", "error");
+      } finally {
+        setUpdating(false);
+      }
+    });
+  };
 
   if (loading) return <p className="text-gray-500 animate-pulse">Loading order details...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
@@ -116,15 +147,25 @@ const OrderDetails = () => {
             {toTitleCase(order.status)}
           </span>
 
-          {/* Toggle Status Button */}
+          {/* Toggle Status Buttons */}
           {order.status !== "completed" && order.status !== "cancelled" && (
-            <button
-              className="px-4 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
-              disabled={updating}
-              onClick={handleToggleStatus}
-            >
-              {updating ? "Updating..." : `Move to ${toTitleCase(nextStatus[order.status])}`}
-            </button>
+            <>
+              <button
+                className="px-4 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                disabled={updating}
+                onClick={handleToggleStatus}
+              >
+                {updating ? "Updating..." : `Move to ${toTitleCase(nextStatus[order.status])}`}
+              </button>
+
+              <button
+                className="px-4 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                disabled={updating}
+                onClick={handleCancelOrder}
+              >
+                {updating ? "Cancelling..." : "Cancel Order"}
+              </button>
+            </>
           )}
         </div>
       </div>

@@ -19,7 +19,7 @@ const OrdersTable = ({ orders, statusColors, onDelete, onEdit }) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {orders.map((order, index) => (
+          {[...orders].reverse().map((order, index) => (
             <tr
               key={order.id}
               className="bg-white hover:bg-gray-50 transition-colors"

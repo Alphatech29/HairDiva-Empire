@@ -19,6 +19,9 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,14 +52,50 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  // ✅ handle edit outside
+  // ✅ handle edit
   const handleEdit = (order) => {
     navigate(`/store/order/${order.id}`);
   };
 
+  // ✅ filter + search logic
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch = order.id
+      .toString()
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      filterStatus === "all" || order.status === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="bg-gray-50 min-h-screen pt-3">
       <h2 className="text-2xl font-bold mb-4">Orders</h2>
+
+      {/* 🔍 Search + Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+        <input
+          type="text"
+          placeholder="Search by Order Number"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-orange-200 focus:border-orange-400"
+        />
+
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-orange-200 focus:border-orange-400"
+        >
+          <option value="all">All Status</option>
+          <option value="paid">Paid</option>
+          <option value="shipped">Shipped</option>
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
 
       {loading ? (
         <p className="text-gray-500">Loading orders...</p>
@@ -64,7 +103,7 @@ const Orders = () => {
         <p className="text-red-600">{error}</p>
       ) : (
         <OrdersTable
-          orders={orders}
+          orders={filteredOrders}
           statusColors={statusColors}
           onEdit={handleEdit}
         />
