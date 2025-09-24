@@ -3,6 +3,7 @@ const { getProductsController, getProductByIdController, addHairProduct, deleteP
 const { createOrderController, getAllOrdersController, getOrderByNumberController, updateOrderStatusController} = require("../controllers/product/order");
 const { login} = require("../controllers/auths/login");
 const { flutterwaveWebhook } = require("../utility/webHook");
+const { getAllTransactionsController } = require("../controllers/product/transactions");
 const generalRoute = express.Router();
 
 // ------- General --------- //
@@ -16,6 +17,7 @@ generalRoute.post("/flutterwave-webhook",flutterwaveWebhook);
 generalRoute.get("/all-order",getAllOrdersController);
 generalRoute.get("/order/:orderNumber",getOrderByNumberController);
 generalRoute.put("/orders/:orderNumber/status",updateOrderStatusController);
+generalRoute.get("/transaction",getAllTransactionsController);
 
 
 // ------- Authentication --------- //

@@ -7,6 +7,7 @@ import AddProduct from "../general/shop/addProduct";
 import EditProduct from "../general/shop/editProduct";
 import Orders from "../general/shop/order";
 import OrderDetails from "../general/shop/orderDetails";
+import Transaction from "../general/shop/transaction";
 
 export default function ShopRoute() {
   return (
@@ -18,6 +19,7 @@ export default function ShopRoute() {
         <Route path="products/edit/:id" element={<EditProduct/>}></Route>
         <Route path="order/:id" element={<OrderDetails/>}></Route>
         <Route path="orders" element={<Orders/>}></Route>
+        <Route path="transaction" element={<Transaction/>}></Route>
       </Route>
     </Routes>
   );

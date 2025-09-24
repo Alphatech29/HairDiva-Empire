@@ -37,4 +37,16 @@ async function createTransaction(data) {
   }
 }
 
-module.exports = { createTransaction };
+
+// ✅ New function: Get all transactions
+async function getAllTransactions() {
+  try {
+    const [rows] = await pool.query("SELECT * FROM transactions ORDER BY id DESC");
+    return { success: true, data: rows };
+  } catch (err) {
+    console.error("DB select error:", err);
+    return { success: false, message: err.message };
+  }
+}
+
+module.exports = { createTransaction, getAllTransactions };

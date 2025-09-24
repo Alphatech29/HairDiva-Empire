@@ -6,7 +6,8 @@ import {
   FaCog,
   FaTimes,
   FaSignOutAlt,
-  FaBuromobelexperte
+  FaBuromobelexperte,
+  FaHistory
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../utilitys/authContext";
@@ -20,6 +21,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Products", path: "/store/products", icon: <FaBox /> },
     { name: "Customers", path: "/store/customers", icon: <FaUsers /> },
     { name: "Order's", path: "/store/orders", icon: <FaBuromobelexperte  /> },
+    { name: "Transaction's", path: "/store/transaction", icon: <FaHistory   /> },
     { name: "Settings", path: "/store/settings", icon: <FaCog /> },
   ];
 
