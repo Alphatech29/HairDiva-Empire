@@ -5,29 +5,26 @@ import {
   FaUsers,
   FaCog,
   FaTimes,
-  FaSignOutAlt,
+  FaCalendarAlt ,
   FaBuromobelexperte,
-  FaHistory
+  FaHistory,
+FaChair
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../utilitys/authContext";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation();
-  const { logout } = useAuth();
 
   const links = [
     { name: "Dashboard", path: "/store", icon: <FaTachometerAlt /> },
     { name: "Products", path: "/store/products", icon: <FaBox /> },
-    { name: "Customers", path: "/store/customers", icon: <FaUsers /> },
+    { name: "Appointment", path: "/store/appointment", icon: <FaCalendarAlt /> },
     { name: "Order's", path: "/store/orders", icon: <FaBuromobelexperte  /> },
+    { name: "Salon Service", path: "/store/salon/service", icon: <FaChair    /> },
     { name: "Transaction's", path: "/store/transaction", icon: <FaHistory   /> },
     { name: "Settings", path: "/store/settings", icon: <FaCog /> },
   ];
 
-  const handleLogout = () => {
-    logout();
-  };
 
   return (
     <>
@@ -80,15 +77,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               </Link>
             ))}
           </div>
-
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 hover:bg-red-600 bg-red-500 text-white"
-          >
-            <FaSignOutAlt />
-            <span>Logout</span>
-          </button>
         </nav>
       </aside>
     </>

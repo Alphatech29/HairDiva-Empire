@@ -13,11 +13,17 @@ const {
   enforceHTTPS,
 } = require("./middleWare/apiSecurity");
 const { upload, uploadErrorHandler } = require('./utility/multerConfig');
+const cleanupOldAppointments = require("./utility/cleanup");
 
 dotenv.config({ silent: false });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Start cleanup job
+cleanupOldAppointments(); // run once on startup
+// then continues every hour because of setInterval inside
+
 
 // ===== Trust Proxy =====
 app.set("trust proxy", process.env.NODE_ENV === "production" ? 1 : 0);

@@ -51,9 +51,12 @@ const SalonSection = () => {
         </div>
 
         {/* CTA */}
-        <button className="mt-8 text-white bg-primary-950/10 backdrop-blur-md rounded-md px-10 py-3 text-lg font-bold shadow-lg animate-bounce">
+        <a href="/salon/book-appointment">
+         <button className="mt-8 text-white bg-primary-950/10 backdrop-blur-md rounded-md px-10 py-3 text-lg font-bold shadow-lg animate-bounce">
           Book an Appointment
         </button>
+        </a>
+
       </div>
     </section>
   );

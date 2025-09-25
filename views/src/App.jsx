@@ -13,6 +13,7 @@ import ShopPrivateRoute from "./utilitys/shopPrivateRoute";
 import { AuthProvider } from "./utilitys/authContext";
 import OrderConfirmed from "./general/orderConfirmed";
 import TrackOrder from "./general/trackOrder";
+import Appointment from "./general/appointment";
 
 
 function Layout({ children }) {
@@ -46,6 +47,7 @@ export default function App() {
               <Route path="/shop/confirmation" element={<OrderConfirmed />} />
               <Route path="/order/track-order" element={<TrackOrder />} />
               <Route path="/shop/product/:slugId" element={<SingleProduct />} />
+              <Route path="/salon/book-appointment" element={<Appointment />} />
 
               {/* Protected Admin Routes */}
               <Route element={<ShopPrivateRoute />}>

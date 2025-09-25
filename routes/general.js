@@ -1,9 +1,11 @@
 const express = require("express");
-const { getProductsController, getProductByIdController, addHairProduct, deleteProductByIdController, updateHairProductController } = require("../controllers/product/product");
-const { createOrderController, getAllOrdersController, getOrderByNumberController, updateOrderStatusController} = require("../controllers/product/order");
+const { getProductsController, getProductByIdController, addHairProduct, deleteProductByIdController, updateHairProductController } = require("../controllers/shop/product");
+const { createOrderController, getAllOrdersController, getOrderByNumberController, updateOrderStatusController} = require("../controllers/shop/order");
 const { login} = require("../controllers/auths/login");
 const { flutterwaveWebhook } = require("../utility/webHook");
-const { getAllTransactionsController } = require("../controllers/product/transactions");
+const { getAllTransactionsController } = require("../controllers/shop/transactions");
+const { addService, fetchServices, editServiceById, deleteService } = require("../controllers/shop/service");
+const { appointmentController } = require("../controllers/shop/appointment");
 const generalRoute = express.Router();
 
 // ------- General --------- //
@@ -18,7 +20,11 @@ generalRoute.get("/all-order",getAllOrdersController);
 generalRoute.get("/order/:orderNumber",getOrderByNumberController);
 generalRoute.put("/orders/:orderNumber/status",updateOrderStatusController);
 generalRoute.get("/transaction",getAllTransactionsController);
-
+generalRoute.post("/create-service",addService);
+generalRoute.get("/all-services",fetchServices);
+generalRoute.put("/services/:id",editServiceById);
+generalRoute.delete("/services/:id",deleteService);
+generalRoute.post("/create-appointment",appointmentController);
 
 // ------- Authentication --------- //
 generalRoute.post("/login",login);

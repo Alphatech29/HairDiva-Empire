@@ -28,7 +28,7 @@ function Transaction() {
   }, []);
 
   const getStatusBadge = (status) => {
-    const baseStyle = "px-3 py-1 rounded-full text-white text-sm font-";
+    const baseStyle = "px-3 py-1 rounded-full text-white text-xs font-";
     switch (status) {
       case 'successful':
         return <span className={`${baseStyle} bg-green-500`}>Successful</span>;
@@ -82,14 +82,14 @@ function Transaction() {
           </thead>
           <tbody>
             {filteredTransactions.map((t, index) => (
-              <tr key={t.id} className="hover:bg-gray-50 bg-white">
+              <tr key={t.id} className="hover:bg-gray-50 bg-white text-xs">
                 <td className="px-4 py-2 border-b">{index + 1}</td>
                 <td className="px-4 py-2 border-b">{t.order_number}</td>
                 <td className="px-4 py-2 border-b">{t.flw_ref}</td>
                 <td className="px-4 py-2 border-b">{formatAmount(t.amount)}</td>
                 <td className="px-4 py-2 border-b">{formatAmount(t.charged_amount)}</td>
                 <td className="px-4 py-2 border-b">{t.payment_type}</td>
-                <td className="px-4 py-2 border-b">{getStatusBadge(t.status)}</td>
+                <td className="px-4 py-2 border-b text-xs">{getStatusBadge(t.status)}</td>
                 <td className="px-4 py-2 border-b">{formatDateTime(t.created_at)}</td>
               </tr>
             ))}
