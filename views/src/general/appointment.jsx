@@ -36,6 +36,14 @@ function Appointment() {
     return day === 0 ? sundayTimeslots : defaultTimeslots;
   };
 
+  // Format phone to +234 while keeping user display intact
+  const formatPhoneNumber = (num) => {
+    let cleaned = num.replace(/\D/g, "");
+    if (cleaned.startsWith("0")) cleaned = "+234" + cleaned.slice(1);
+    else if (!cleaned.startsWith("+")) cleaned = "+" + cleaned;
+    return cleaned;
+  };
+
   // Fetch services dynamically
   useEffect(() => {
     const loadServices = async () => {
@@ -62,6 +70,24 @@ function Appointment() {
     loadServices();
   }, []);
 
+  // Show payment success alert if redirected back after online payment
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const txRef = params.get("txRef");
+
+    if (status === "successful" && txRef) {
+      SweetAlert.alert(
+        "Payment Successful",
+        `Your Appointment has been booked successfully!\nTransaction Reference: ${txRef}`,
+        "success"
+      );
+
+      // Clear query params so alert doesn’t show again on refresh
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   // Handle appointment confirmation
   const handleConfirm = async () => {
     if (!fullName || !email || !phone || !whatsapp || !address || !selectedService || !date || !time || !paymentMethod) {
@@ -82,8 +108,8 @@ function Appointment() {
       const result = await createAppointmentService({
         fullName,
         email,
-        phone,
-        whatsapp,
+        phone: formatPhoneNumber(phone),
+        whatsapp: formatPhoneNumber(whatsapp),
         address,
         serviceId: selectedService.id,
         price: selectedService.price,
@@ -126,26 +152,26 @@ function Appointment() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaUser className="text-primary-700" /> Full Name</label>
-            <TextInput type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Enter your name" required />
+            <TextInput type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Enter your name" required className="bg-white" />
           </div>
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaEnvelope className="text-primary-700" /> Email</label>
-            <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" required />
+            <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" required className="bg-white" />
           </div>
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaPhone className="text-primary-700" /> Phone</label>
-            <TextInput type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+234 800 000 0000" required />
+            <TextInput type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="09123456789" required className="bg-white" />
           </div>
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaPhone className="text-green-500" /> WhatsApp</label>
-            <TextInput type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+234 800 000 0000" required />
+            <TextInput type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="09123456789" required className="bg-white" />
           </div>
         </div>
 
         {/* Address */}
         <div className="mb-8">
           <label className="flex items-center gap-2 font-medium mb-2"><FaEnvelope className="text-primary-700" /> Address</label>
-          <TextInput type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter your address" required />
+          <TextInput type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter your address" required className="bg-white" />
         </div>
 
         {/* Service Selection */}
@@ -173,12 +199,7 @@ function Appointment() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           <div className="p-4 bg-white border rounded-xl shadow-sm">
             <label className="flex items-center gap-2 font-medium mb-3"><FaCalendarAlt className="text-primary-700" /> Date</label>
-            <Calendar
-              onChange={(d) => { setDate(d); setTime(""); }}
-              minDate={new Date()}
-              className="rounded-lg shadow-md p-2 w-full"
-              value={date}
-            />
+            <Calendar onChange={(d) => { setDate(d); setTime(""); }} minDate={new Date()} className="rounded-lg shadow-md p-2 w-full" value={date} />
           </div>
           <div className="p-4 bg-white border rounded-xl shadow-sm">
             <label className="flex items-center gap-2 font-medium mb-3"><FaClock className="text-primary-700" /> Time</label>
@@ -200,7 +221,7 @@ function Appointment() {
         {/* Notes */}
         <div className="mb-10">
           <label className="font-medium mb-2 block">Special Requests / Notes</label>
-          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Please prepare hair coloring tools..." rows={4} />
+          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Please prepare hair coloring tools..." rows={4} className="bg-white" />
         </div>
 
         {/* Payment Method */}
@@ -223,7 +244,11 @@ function Appointment() {
 
         {/* Confirm Button */}
         <div className="flex justify-center">
-          <Button onClick={handleConfirm} className="px-8 py-3 font-semibold bg-primary-600 rounded-lg" disabled={loading}>
+          <Button
+            onClick={handleConfirm}
+            className="px-8 py-3 font-semibold bg-white text-primary-600 border border-primary-600 rounded-lg"
+            disabled={loading}
+          >
             {loading ? (
               <div className="flex items-center gap-2">
                 <Spinner size="sm" /> Processing...

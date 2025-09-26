@@ -8,15 +8,19 @@ function formatDateForMySQL(dateStr) {
 }
 
 // Helper: Format time for MySQL
+// Returns time as-is with AM/PM (e.g., "01:00 PM")
 function formatTimeForMySQL(timeStr) {
   if (!timeStr) return null;
-  const [time, modifier] = timeStr.split(" ");
-  let [hours, minutes] = time.split(":");
-  hours = parseInt(hours, 10);
-  if (modifier === "PM" && hours !== 12) hours += 12;
-  if (modifier === "AM" && hours === 12) hours = 0;
-  return `${String(hours).padStart(2, "0")}:${minutes}:00`;
+  // Ensure proper formatting and trim extra spaces
+  const formatted = timeStr.trim().toUpperCase();
+  // Optional validation: check pattern HH:MM AM/PM
+  if (!/^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/.test(formatted)) {
+    throw new Error("Invalid time format. Expected HH:MM AM/PM");
+  }
+  return formatted;
 }
+
+
 
 module.exports = {
   formatDateForMySQL,

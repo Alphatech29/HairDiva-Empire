@@ -1,8 +1,11 @@
+import flowbite from "flowbite/plugin";
+
 // tailwind.config.js
 export default {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
     "./src/components/**/*.{js,ts,jsx,tsx}",
+
   ],
   theme: {
     screens: {
@@ -51,5 +54,7 @@ export default {
       },
     },
   },
-   plugins: [require("flowbite/plugin")],
+    plugins: [
+    flowbite,
+  ],
 };

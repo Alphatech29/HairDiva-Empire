@@ -28,3 +28,51 @@ export const createAppointmentService = async (appointmentData) => {
     };
   }
 };
+
+
+
+// Service to fetch all appointments
+export const getAllAppointments = async () => {
+  try {
+    const response = await axios.get("/api/all-appointment", {
+      headers: { "Content-Type": "application/json" },
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Fetching appointments failed:",
+      error.response?.data || error.message
+    );
+
+    return {
+      success: false,
+      message: error.response?.data?.message || "Server error",
+      data: [],
+      error: error.response?.data || error.message,
+    };
+  }
+};
+
+
+// Update appointment status
+export const updateAppointmentById = async (id, status) => {
+  try {
+    const response = await axios.put(
+      `/api/appointments/${id}`,
+      { status },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Updating appointment failed:",
+      error.response?.data || error.message
+    );
+    return {
+      success: false,
+      message: error.response?.data?.message || "Server error",
+      error: error.response?.data || error.message,
+    };
+  }
+};

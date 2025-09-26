@@ -5,7 +5,7 @@ const { login} = require("../controllers/auths/login");
 const { flutterwaveWebhook } = require("../utility/webHook");
 const { getAllTransactionsController } = require("../controllers/shop/transactions");
 const { addService, fetchServices, editServiceById, deleteService } = require("../controllers/shop/service");
-const { appointmentController } = require("../controllers/shop/appointment");
+const { appointmentController, getAllAppointmentsController, updateAppointmentController } = require("../controllers/shop/appointment");
 const generalRoute = express.Router();
 
 // ------- General --------- //
@@ -25,6 +25,8 @@ generalRoute.get("/all-services",fetchServices);
 generalRoute.put("/services/:id",editServiceById);
 generalRoute.delete("/services/:id",deleteService);
 generalRoute.post("/create-appointment",appointmentController);
+generalRoute.get("/all-appointment",getAllAppointmentsController);
+generalRoute.put("/appointments/:id", updateAppointmentController);
 
 // ------- Authentication --------- //
 generalRoute.post("/login",login);

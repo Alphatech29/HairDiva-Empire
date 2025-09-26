@@ -1,14 +1,13 @@
 import Swal from "sweetalert2";
 
 const SweetAlert = {
-  alert: (title, text, icon = "info", confirmText = "OK", timer = 3000) => {
+  alert: (title, text, icon = "info", confirmText = "OK") => {
     return Swal.fire({
       title,
       text,
       icon,
       confirmButtonText: confirmText,
-      timerProgressBar: true,
-      timer,
+      timerProgressBar: false,
     });
   },
 
