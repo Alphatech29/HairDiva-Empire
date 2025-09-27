@@ -152,26 +152,26 @@ function Appointment() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaUser className="text-primary-700" /> Full Name</label>
-            <TextInput type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Enter your name" required className="bg-white" />
+            <TextInput type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Enter your name" required className="bg-white placeholder:text-gray-300" />
           </div>
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaEnvelope className="text-primary-700" /> Email</label>
-            <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" required className="bg-white" />
+            <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@gmail.com" required className="bg-white placeholder:text-gray-300" />
           </div>
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaPhone className="text-primary-700" /> Phone</label>
-            <TextInput type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="09123456789" required className="bg-white" />
+            <TextInput type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+2349123456789" required className="bg-white placeholder:text-gray-300" />
           </div>
           <div>
             <label className="flex items-center gap-2 font-medium mb-2"><FaPhone className="text-green-500" /> WhatsApp</label>
-            <TextInput type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="09123456789" required className="bg-white" />
+            <TextInput type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+2349123456789" required className="bg-white placeholder:text-gray-300" />
           </div>
         </div>
 
         {/* Address */}
         <div className="mb-8">
           <label className="flex items-center gap-2 font-medium mb-2"><FaEnvelope className="text-primary-700" /> Address</label>
-          <TextInput type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter your address" required className="bg-white" />
+          <TextInput type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter your address" required className="bg-white placeholder:text-gray-300" />
         </div>
 
         {/* Service Selection */}
@@ -221,7 +221,7 @@ function Appointment() {
         {/* Notes */}
         <div className="mb-10">
           <label className="font-medium mb-2 block">Special Requests / Notes</label>
-          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Please prepare hair coloring tools..." rows={4} className="bg-white" />
+          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Please prepare hair coloring tools..." rows={4} className="bg-white placeholder:text-gray-300" />
         </div>
 
         {/* Payment Method */}
@@ -246,7 +246,7 @@ function Appointment() {
         <div className="flex justify-center">
           <Button
             onClick={handleConfirm}
-            className="px-8 py-3 font-semibold bg-white text-primary-600 border border-primary-600 rounded-lg"
+            className="px-8 py-3 font-semibold hover:text-white bg-white text-primary-600 border border-primary-600 rounded-lg"
             disabled={loading}
           >
             {loading ? (

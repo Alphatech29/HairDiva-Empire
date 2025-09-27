@@ -1,8 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import { FaBars, FaTimes, FaShoppingCart, FaUser } from "react-icons/fa";
+import { FaBars, FaTimes, FaShoppingCart, } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import CartDropdown from "../../components/cartDropdown";
 import { useCart } from "../../utilitys/cartContext";
+
+const navLinks = [
+  { name: "Home", path: "/" },
+  { name: "Shop", path: "/shop" },
+  { name: "Salon", path: "/salon" },
+  { name: "Track Order", path: "/order/track-order" },
+  { name: "About Us", path: "/about-us" },
+];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,201 +24,83 @@ export default function Header() {
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleCart = () => setCartOpen(!cartOpen);
 
+  // Scroll detection
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close cart on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (cartRef.current && !cartRef.current.contains(event.target)) {
-        setCartOpen(false);
-      }
+      if (cartRef.current && !cartRef.current.contains(event.target)) setCartOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const baseClasses = "transition px-3 py-2 block";
-  const activeClasses = "font-semibold text-primary-500 ";
+  // Base style mapping
+  const linkStyles = {
+    base: "transition px-3 py-2 block",
+    active: "font-semibold border-b-1 border-current",
+    desktop: {
+      scrolled: "text-primary-800 hover:text-primary-600",
+      transparent: "text-white hover:text-gray-300",
+      activeScrolled: "text-primary-600 border-primary-600",
+      activeTransparent: "text-white border-white",
+    },
+    mobile: "hover:text-primary-500",
+  };
+
+  const getDesktopLinkClass = (isActive) => {
+    if (isActive) return scrolled ? `${linkStyles.base} ${linkStyles.active} ${linkStyles.desktop.activeScrolled}` : `${linkStyles.base} ${linkStyles.active} ${linkStyles.desktop.activeTransparent}`;
+    return scrolled ? `${linkStyles.base} ${linkStyles.desktop.scrolled}` : `${linkStyles.base} ${linkStyles.desktop.transparent}`;
+  };
+
+  const headerBg = scrolled ? "bg-primary-100 shadow-md" : "bg-transparent backdrop-blur-lg";
+  const mobileBg = scrolled ? "bg-primary-100" : "bg-primary-100/30 backdrop-blur-md";
+  const iconColor = scrolled ? "text-primary-800 hover:text-primary-600" : "text-white hover:text-primary-300";
 
   return (
     <header className="fixed w-full z-50">
-      <div
-        className={`transition-colors md:px-[5rem] duration-300 ${
-          scrolled ? "bg-primary-100 shadow-md" : "bg-transparent"
-        }`}
-      >
+      <div className={`transition-colors md:px-[5rem] duration-300 ${headerBg}`}>
         <div className="flex justify-between items-center px-4 md:px-12 py-2">
           {/* Logo */}
-          <div
-            className={`text-2xl font-bold ${
-              scrolled ? "text-primary-800" : "text-white"
-            }`}
-          >
-            {/* Logo */}
-            <NavLink to="/" className="flex items-center">
-              <img
-                src={
-                  scrolled ? "/image/logo-scrolled.png" : "/image/favicon.png"
-                }
-                alt="HairDiva Empire"
-                className="md:w-40 sm:w-32 h-16 object-cover"
-              />
-            </NavLink>
-          </div>
+          <NavLink to="/" className="flex items-center">
+            <img
+              src={scrolled ? "/image/logo-scrolled.png" : "/image/favicon.png"}
+              alt="HairDiva Empire"
+              className="md:w-40 sm:w-32 h-16 object-cover"
+            />
+          </NavLink>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-6 font-medium">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `${baseClasses} ${
-                  isActive
-                    ? `${activeClasses} ${
-                        scrolled
-                          ? "text-primary-600 border-primary-600"
-                          : "text-white border-white"
-                      }`
-                    : `${
-                        scrolled
-                          ? "text-primary-800 hover:text-primary-600"
-                          : "text-white hover:text-gray-300"
-                      }`
-                }`
-              }
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="/shop"
-              className={({ isActive }) =>
-                `${baseClasses} ${
-                  isActive
-                    ? `${activeClasses} ${
-                        scrolled
-                          ? "text-primary-600 border-primary-600"
-                          : "text-white border-white"
-                      }`
-                    : `${
-                        scrolled
-                          ? "text-primary-800 hover:text-primary-600"
-                          : "text-white hover:text-gray-300"
-                      }`
-                }`
-              }
-            >
-              Shop
-            </NavLink>
-            <NavLink
-              to="/salon"
-              className={({ isActive }) =>
-                `${baseClasses} ${
-                  isActive
-                    ? `${activeClasses} ${
-                        scrolled
-                          ? "text-primary-600 border-primary-600"
-                          : "text-white border-white"
-                      }`
-                    : `${
-                        scrolled
-                          ? "text-primary-800 hover:text-primary-600"
-                          : "text-white hover:text-gray-300"
-                      }`
-                }`
-              }
-            >
-              Salon
-            </NavLink>
-
-            <NavLink
-              to="/order/track-order"
-              className={({ isActive }) =>
-                `${baseClasses} ${
-                  isActive
-                    ? `${activeClasses} ${
-                        scrolled
-                          ? "text-primary-600 border-primary-600"
-                          : "text-white border-white"
-                      }`
-                    : `${
-                        scrolled
-                          ? "text-primary-800 hover:text-primary-600"
-                          : "text-white hover:text-gray-300"
-                      }`
-                }`
-              }
-            >
-              Track Order
-            </NavLink>
-            <NavLink
-              to="/about-us"
-              className={({ isActive }) =>
-                `${baseClasses} ${
-                  isActive
-                    ? `${activeClasses} ${
-                        scrolled
-                          ? "text-primary-600 border-primary-600"
-                          : "text-white border-white"
-                      }`
-                    : `${
-                        scrolled
-                          ? "text-primary-800 hover:text-primary-600"
-                          : "text-white hover:text-gray-300"
-                      }`
-                }`
-              }
-            >
-              About Us
-            </NavLink>
+            {navLinks.map(({ name, path }) => (
+              <NavLink key={name} to={path} className={({ isActive }) => getDesktopLinkClass(isActive)}>
+                {name}
+              </NavLink>
+            ))}
           </nav>
 
           {/* Icons + Mobile Menu Toggle */}
           <div className="flex items-center justify-center space-x-6 text-xl">
-            <NavLink
-              to="/account"
-              className={`${
-                scrolled
-                  ? "text-primary-800 hover:text-primary-600"
-                  : "text-white hover:text-primary-300"
-              }`}
-            >
-              <FaUser />
-            </NavLink>
 
             <div className="relative" ref={cartRef}>
-              <button
-                onClick={toggleCart}
-                className={`${
-                  scrolled
-                    ? "text-primary-800 hover:text-primary-600"
-                    : "text-white hover:text-primary-300"
-                } relative mt-3`}
-              >
-                <FaShoppingCart />
+              <button onClick={toggleCart} className={`${iconColor} relative mt-3`}>
+                <FaShoppingCart size={25} />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
               </button>
-              {cartOpen && (
-                <CartDropdown
-                  items={cartItems}
-                  total={total}
-                  onClose={() => setCartOpen(false)}
-                />
-              )}
+              {cartOpen && <CartDropdown items={cartItems} total={total} onClose={() => setCartOpen(false)} />}
             </div>
 
             {/* Mobile menu toggle */}
-            <div
-              className={`${
-                scrolled ? "text-primary-800" : "text-white "
-              } md:hidden cursor-pointer`}
-              onClick={toggleMenu}
-            >
+            <div className={`${scrolled ? "text-primary-800" : "text-white"} md:hidden cursor-pointer`} onClick={toggleMenu}>
               {isOpen ? <FaTimes /> : <FaBars />}
             </div>
           </div>
@@ -218,91 +108,21 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <nav
-            className={`md:hidden absolute top-full left-0 w-full shadow-md transition-colors duration-300 ${
-              scrolled ? "bg-primary-100" : "bg-primary-100/30 backdrop-blur-md"
-            }`}
-          >
-            <ul
-              className={`flex flex-col px-4 py-4 space-y-2 ${
-                scrolled ? "text-primary-800" : "text-white"
-              }`}
-            >
-              <li>
-                <NavLink
-                  to="/"
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) =>
-                    `${baseClasses} ${
-                      isActive
-                        ? "font-semibold border-b-2 border-current"
-                        : "hover:text-primary-500"
-                    }`
-                  }
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/shop"
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) =>
-                    `${baseClasses} ${
-                      isActive
-                        ? "font-semibold border-b-2 border-current"
-                        : "hover:text-primary-500"
-                    }`
-                  }
-                >
-                  Shop
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/salon"
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) =>
-                    `${baseClasses} ${
-                      isActive
-                        ? "font-semibold border-b-2 border-current"
-                        : "hover:text-primary-500"
-                    }`
-                  }
-                >
-                  Salon
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/order/track-order"
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) =>
-                    `${baseClasses} ${
-                      isActive
-                        ? "font-semibold border-b-2 border-current"
-                        : "hover:text-primary-500"
-                    }`
-                  }
-                >
-                  Track Order
-                </NavLink>
-              </li>
-               <li>
-                <NavLink
-                  to="/about-us"
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) =>
-                    `${baseClasses} ${
-                      isActive
-                        ? "font-semibold border-b-2 border-current"
-                        : "hover:text-primary-500"
-                    }`
-                  }
-                >
-                  About Us
-                </NavLink>
-              </li>
+          <nav className={`md:hidden absolute top-full left-0 w-full shadow-md transition-colors duration-300 ${mobileBg}`}>
+            <ul className={`flex flex-col px-4 py-4 space-y-2 ${scrolled ? "text-primary-800" : "text-white"}`}>
+              {navLinks.map(({ name, path }) => (
+                <li key={name}>
+                  <NavLink
+                    to={path}
+                    onClick={() => setIsOpen(false)}
+                    className={({ isActive }) =>
+                      `${linkStyles.base} ${isActive ? linkStyles.active : linkStyles.mobile}`
+                    }
+                  >
+                    {name}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </nav>
         )}

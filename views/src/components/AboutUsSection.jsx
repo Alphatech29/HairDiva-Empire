@@ -43,7 +43,7 @@ const AboutUsSection = () => {
             whileTap={{ scale: 0.95 }}
             className="mt-6 px-6 py-3 bg-gradient-to-r from-primary-600 to-yellow-500 text-white font-medium rounded-md shadow-lg transition"
           >
-           <NavLink to="/shop">Explore Our Collection</NavLink>
+            <NavLink to="/shop">Explore Our Collection</NavLink>
           </motion.button>
         </motion.div>
 
@@ -53,13 +53,15 @@ const AboutUsSection = () => {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="overflow-hidden rounded-2xl shadow-2xl"
+          className="relative overflow-hidden rounded-2xl shadow-2xl"
         >
           <img
-            src="/image/hair-1.jpg"
+            src="/image/bag-1.jpeg"
             alt="HairDiva Empire"
-            className="w-full h-[35rem] object-cover hover:scale-105 transition-transform duration-700"
+            className="w-full h-[30rem] object-cover hover:scale-105 transition-transform duration-700"
           />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </motion.div>
       </div>
     </section>
